@@ -1,2 +1,2 @@
 # tinybx_stuff
-Scripts and gateway for the TinyFPGA bx
+Scripts and gateware for the TinyFPGA bx
