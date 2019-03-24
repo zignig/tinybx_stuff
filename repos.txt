@@ -1,6 +1,0 @@
-https://github.com/m-labs/migen
-https://github.com/YosysHQ/nextpnr.git
-https://github.com/m-labs/nmigen
-https://github.com/cliffordwolf/yosys.git
-https://github.com/cliffordwolf/icestorm.git
-https://github.com/enjoy-digital/litex
