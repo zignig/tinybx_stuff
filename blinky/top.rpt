@@ -1,0 +1,43 @@
+
+icetime topological timing analysis report
+==========================================
+
+Info: max_span_hack is enabled: estimate is conservative.
+
+Report for critical path:
+-------------------------
+
+        lc40_16_3_6 (LogicCell40) [clk] -> lcout: 0.896 ns
+     0.896 ns net_60842 (blink_counter[22])
+        odrv_16_3_60842_64808 (Odrv4) I -> O: 0.548 ns
+        t89 (LocalMux) I -> O: 0.486 ns
+        inmux_17_3_69035_69100 (InMux) I -> O: 0.382 ns
+        lc40_17_3_6 (LogicCell40) in1 -> lcout: 0.589 ns
+     2.901 ns net_64918 ($abc$931$techmap$shiftx$top.v:32$3.$10\buffer[31:0][0]_inv)
+        t106 (LocalMux) I -> O: 0.486 ns
+        inmux_17_3_69044_69105 (InMux) I -> O: 0.382 ns
+        lc40_17_3_7 (LogicCell40) in0 -> lcout: 0.662 ns
+     4.431 ns net_64919 ($abc$931$n14)
+        odrv_17_3_64919_24948 (Odrv12) I -> O: 0.796 ns
+        t112 (LocalMux) I -> O: 0.486 ns
+        inmux_15_3_60879_60922 (InMux) I -> O: 0.382 ns
+        lc40_15_3_2 (LogicCell40) in0 -> lcout: 0.662 ns
+     6.757 ns net_56761 (PIN_12$2)
+        odrv_15_3_56761_60688 (Odrv12) I -> O: 0.796 ns
+        t57 (Span12Mux_h12) I -> O: 0.796 ns
+        t56 (Span12Mux_v12) I -> O: 0.796 ns
+        t55 (LocalMux) I -> O: 0.486 ns
+        inmux_3_0_12290_12276 (IoInMux) I -> O: 0.382 ns
+    10.013 ns net_12276 (PIN_12$2)
+        pre_io_3_0_1 (PRE_IO) DOUT0 [setup]: 0.103 ns
+    10.116 ns io_pad_3_0_1_din
+
+Resolvable net names on path:
+     0.896 ns ..  2.312 ns blink_counter[22]
+     2.901 ns ..  3.770 ns $abc$931$techmap$shiftx$top.v:32$3.$10\buffer[31:0][0]_inv
+     4.431 ns ..  6.095 ns $abc$931$n14
+     6.757 ns .. 10.013 ns PIN_12$2
+
+Total number of logic levels: 4
+Total path delay: 10.12 ns (98.85 MHz)
+

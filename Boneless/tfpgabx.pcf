@@ -1,2 +1,0 @@
-set_io led[0] B3
-set_io clk B2 
