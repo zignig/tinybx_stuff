@@ -12,11 +12,11 @@ git clone https://github.com/YosysHQ/arachne-pnr lib/arachne-pnr
 
 apt-get install libboost-all-dev qt5-default libftdi-dev
 
-cd ../icestorm
+cd lib/icestorm
 make
 make install
 
-cd lib/migen
+cd ../migen
 python setup.py install
 
 cd ../nextpnr

@@ -1,5 +1,2 @@
-set_io led[0] H9 
-set_io led[1] D8 
-set_io led[2] D9 
-set_io led[3] C9 
+set_io led[0] B3
 set_io clk B2 
