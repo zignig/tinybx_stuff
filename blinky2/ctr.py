@@ -52,4 +52,4 @@ ctr = Counter(width=16)
 p = Pin()
 b = Blinker(p,16)
 if __name__ == "__main__":
-    main(b, ports=[p.o])
+    main(b, ports=[p.o],name="blinky")
