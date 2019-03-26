@@ -35,7 +35,21 @@ class Counter:
         return m
 
 
+class Blinker:
+    def __init__(self,pin,period):
+        self.period = period
+        self.pin = pin
+
+    def elaborate(self,platform):
+        m = Module()
+        counter = Counter(self.period)
+        m.submodules += counter
+        m.d.comb += self.pin.o.eq(counter.o)
+        return m
+
+
 ctr = Counter(width=16)
 p = Pin()
+b = Blinker(p,16)
 if __name__ == "__main__":
-    main(p, ports=[p.o])
+    main(b, ports=[p.o])
