@@ -50,6 +50,6 @@ class Blinker:
 
 ctr = Counter(width=16)
 p = Pin()
-b = Blinker(p,16)
+b = Blinker(p,20)
 if __name__ == "__main__":
     main(b, ports=[p.o],name="blinky")
