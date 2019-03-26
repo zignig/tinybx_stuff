@@ -6,5 +6,5 @@ python3 ctr.py generate blinky.v
 yosys blinky.v top.sv -p "synth_ice40 -top top -json blinky.json"
 nextpnr-ice40 --hx8k --package cm81 --pcf pins.pcf --json blinky.json --asc blinky.txt
 icepack blinky.txt blinky.bin
-tinyprog -p tinyBX.bin
+tinyprog -p blinky.bin
 

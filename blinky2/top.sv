@@ -1,9 +1,9 @@
 module top(...);
     input CLK;
-    output LED;
+    output PIN_12;
     blinky b(
         .clk(CLK),
         .rst(0),
-        .o(LED),
+        .o(PIN_12),
     );
 endmodule
