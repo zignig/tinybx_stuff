@@ -1,12 +1,12 @@
 J init
 .macro on 
     MOVI R3,4095
-    STX R3,R7,0
+    STX R3,R4,0
 .endm
 
 .macro off
     MOVI R3,0
-    STX R3,R7,0
+    STX R3,R4,0
 .endm
 
 
@@ -38,11 +38,7 @@ init:
 blink:
     on
     long 
-    long
     off
-    long
-    long
-    long 
     long
 J blink 
 
