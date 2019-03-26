@@ -3,9 +3,10 @@ from nmigen.cli import main, pysim
 
 
 class Pin:
-    def __init__(self):
+    def __init__(self,name):
+        self.name=name
         self.io = Signal()
-        self.o = Signal()
+        self.o = Signal(name=name)
         self.oe = Signal()
         self.i = Signal()
 
@@ -38,18 +39,35 @@ class Counter:
 class Blinker:
     def __init__(self,pin,period):
         self.period = period
-        self.pin = pin
+        self.pin = Signal(name=pin) 
+        
 
     def elaborate(self,platform):
         m = Module()
         counter = Counter(self.period)
         m.submodules += counter
-        m.d.comb += self.pin.o.eq(counter.o)
+        m.d.comb += self.pin.eq(counter.o)
         return m
 
+class Multi:
+    def __init__(self,pins):
+        self.names= pins.split()
+        self.pins = []
+        
+    def elaborate(self,platform):
+        m = Module()
+        m.domains += ClockDomain(name="sync",reset_less=True)
+        for i,j in enumerate(self.names):
+            b = Blinker(j,21+i)
+            m.submodules += b
+            self.pins.append(Signal(name=j))
+            m.d.comb += self.pins[i].eq(b.pin)
+        return m
 
-ctr = Counter(width=16)
-p = Pin()
-b = Blinker(p,21)
+  
+#b = Blinker("PIN_13",21)
+#b = Blinker("PIN_13",21)
+b = Multi("LED PIN_12 PIN_13 PIN_14 PIN_15")
+
 if __name__ == "__main__":
-    main(b, ports=[p.o],name="blinky")
+    main(b, ports=b.pins,name="top")

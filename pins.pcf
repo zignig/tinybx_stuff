@@ -91,4 +91,4 @@ set_io --warn-no-port USBN A4
 set_io --warn-no-port USBPU A3
 
 # 16MHz clock
-set_io --warn-no-port clk B2 # input
+set_io --warn-no-port CLK B2 # input

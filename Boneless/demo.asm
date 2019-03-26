@@ -1,6 +1,6 @@
 J init
 .macro on 
-    MOVI R3,1
+    MOVI R3,4095
     STX R3,R7,0
 .endm
 
@@ -9,22 +9,40 @@ J init
     STX R3,R7,0
 .endm
 
-MOVI R1, 8192 
+
+wait:
+    MOVI R2,0
+waiter:
+    ADDI R2,1
+    CMP R2,R1
+    JE ex
+    J waiter 
+ex:
+    JR R7,0
+
+.macro WAIT
+    JAL R7, wait
+.endm
+
+.macro long
+    WAIT
+    WAIT
+    WAIT
+    WAIT
+    WAIT
+    WAIT
+.endm
 
 init:
-    ADDI R1,10
-    MOVI R2,0
+    MOVI R1, 65000 
+blink:
     on
-loop1:
-    ADDI R2,1
-    CMP R2,R1
-    JE eloop1
-    J loop1
-eloop1:
+    long 
+    long
     off
-    MOVI R2,0
-loop2:
-    ADDI R2,1
-    CMP R2,R1
-    JE init
-    J loop2
+    long
+    long
+    long 
+    long
+J blink 
+

@@ -1,6 +1,28 @@
-from migen.build.generic_platform import *
-from migen.build.lattice import LatticePlatform
-from migen.build.lattice.programmer import TinyProgProgrammer
+
+class Pins:
+    def __init__(self,pins):
+        self.pins = []
+        for i in pins.split():
+            self.pins.append(i)
+
+class Subsignal:
+    def __init__(self,name,pins,io=None):
+        self.name = name
+        self.pins = pins
+        self.io = io
+
+class IOStandard:
+    def __init__(self,name):
+        self.name = name
+
+class SimpleBoard:
+    def __init__(self,io,connectors):
+        self.io = io
+        self.conn = connectors
+
+    
+
+
 
 _io = [
     ("user_led", 0, Pins("B3"), IOStandard("LVCMOS33")),
@@ -37,25 +59,3 @@ _connectors = [
     ("GPIO", "A2 A1 B1 C2 C1 D2 D1 E2 E1 G2 H1 J1 H2 H9 D9 D8 C9 A9 B8 A8 B7 A7 B6 A6"),
     ("EXTRA", "G1 J3 J4 G9 J9 E8 J2")
 ]
-
-
-# Default peripherals
-serial = [
-    ("serial", 0,
-        Subsignal("tx", Pins("GPIO:0")),
-        Subsignal("rx", Pins("GPIO:1")),
-        IOStandard("LVCMOS33")
-    )
-]
-
-
-class Platform(LatticePlatform):
-    default_clk_name = "clk16"
-    default_clk_period = 62.5
-
-    def __init__(self):
-        LatticePlatform.__init__(self, "ice40-lp8k-cm81", _io, _connectors,
-                                 toolchain="icestorm")
-
-    def create_programmer(self):
-        return TinyProgProgrammer()
