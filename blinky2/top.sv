@@ -1,5 +1,9 @@
 module top(...);
-    input clk;
-    output [3:0] led;
-
+    input CLK;
+    output LED;
+    blinky b(
+        .clk(CLK),
+        .rst(0),
+        .o(LED),
+    );
 endmodule
