@@ -8,17 +8,25 @@ from random import randint
 #  collection of mls , https://users.ece.cmu.edu/~koopman/lfsr
 
 class lsfr:
-    def __init__(self,width=31,taps=[27,30],initial=50):
+    def __init__(self,width=31,taps=[27,30],initial=50,s=20):
         self.o = Signal()
         self.width = width
         self.taps = taps
         self.initial = initial
+        self.stretcher = Signal(8)
+        self.stretch = s
 
     def elaborate(self,platform):
         m = Module()
+        ss = Signal()
         state = Signal(self.width,reset=self.initial)
         m.d.comb += self.o.eq(~reduce(xor,[state[i] for i in self.taps]))
-        m.d.sync += Cat(state).eq(Cat(self.o,state))
+        m.d.sync += self.stretcher.eq(self.stretcher+1)
+        m.d.comb += ss.eq(self.stretcher==self.stretch)
+        with m.If(self.stretcher == self.stretch+1):
+            m.d.sync += self.stretcher.eq(0)
+        with m.If(ss):
+            m.d.sync += Cat(state).eq(Cat(self.o,state))
         return m
 
 
