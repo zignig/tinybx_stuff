@@ -34,7 +34,7 @@ ex:
 .endm
 
 init:
-    MOVI R1, 65000 
+    MOVI R1, 24
 blink:
     on
     long 
