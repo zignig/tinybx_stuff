@@ -1,7 +1,7 @@
 J init
 .macro on 
-    MOVI R3,4095
-    STX R3,R4,0
+    ADDI R0,1
+    STX R0,R4,0
 .endm
 
 .macro off
@@ -29,12 +29,10 @@ ex:
     WAIT
     WAIT
     WAIT
-    WAIT
-    WAIT
 .endm
 
 init:
-    MOVI R1, 24
+    MOVI R1,500 
 blink:
     on
     long 
