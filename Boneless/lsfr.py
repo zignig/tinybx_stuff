@@ -55,6 +55,13 @@ def get_lsfr(min_size=1,max_size=50):
 
 
 if __name__ == "__main__":
-    from nmigen.back.verilog import convert
-    d = convert(get_lsfr(min_size=11))
-    print(d)
+    import argparse
+    from nmigen import cli
+    parser = argparse.ArgumentParser()
+    cli.main_parser(parser)
+    args = parser.parse_args()
+
+    tb= get_lsfr()
+    ios = (tb.o,)
+
+    cli.main_runner(parser,args,tb,name="lsfr",ports=ios)
