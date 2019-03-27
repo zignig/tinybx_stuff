@@ -8,12 +8,12 @@ from random import randint
 #  collection of mls , https://users.ece.cmu.edu/~koopman/lfsr
 
 class lsfr:
-    def __init__(self,width=31,taps=[27,30],initial=50,s=1024):
+    def __init__(self,width=31,taps=[27,30],initial=50,s=1024000):
         self.o = Signal()
         self.width = width
         self.taps = taps
         self.initial = initial
-        self.stretcher = Signal(16)
+        self.stretcher = Signal(20)
         self.stretch = s
 
     def elaborate(self,platform):
