@@ -18,19 +18,15 @@ class lsfr:
 
     def elaborate(self,platform):
         m = Module()
-        ss = Signal()
         state = Signal(self.width,reset=self.initial)
         m.d.comb += self.o.eq(~reduce(xor,[state[i] for i in self.taps]))
         with m.If(self.stretcher == self.stretch):
-            m.d.comb += ss.eq(1)
-        with m.Else():
-            m.d.comb += ss.eq(0)
+            m.d.sync += Cat(state).eq(Cat(self.o,state))
+
         with m.If(self.stretcher == self.stretch+1):
             m.d.sync += self.stretcher.eq(0)
         with m.Else():
             m.d.sync += self.stretcher.eq(self.stretcher+1)
-        with m.If(ss):
-            m.d.sync += Cat(state).eq(Cat(self.o,state))
         return m
 
 
@@ -40,7 +36,7 @@ def get_taps(mls):
     bin_string = bin(val)[2:]
     bits = len(bin_string)
     taps = []
-    for i,j in enumerate(bin_string):
+    for i,j in enumerate(reversed(bin_string)):
         if j == '1':
             taps.append(i)
     return bits,taps
@@ -61,7 +57,7 @@ def get_lsfr(min_size=1,max_size=50):
     select = randint(0,len(taps))
     val = taps[select]
     bits,tap = get_taps(val)
-    initial = randint(1,2**bits)
+    initial = randint(1,2**bits-1)
     print(val,bits,tap,initial)
     return lsfr(bits,tap,initial)
 

@@ -1,29 +1,6 @@
 from nmigen import *
 from nmigen.cli import main, pysim
-from lsfr import get_lsfr
-
-
-class Pin:
-    def __init__(self,name):
-        self.name=name
-        self.io = Signal()
-        self.o = Signal(name=name)
-        self.oe = Signal()
-        self.i = Signal()
-
-    def elaborate(self, platform):
-        m = Module()
-        p = Instance(
-            "SB_IO",
-            p_PIN_TYPE=C(0b101001, 6),
-            io_PACKAGE_PIN=self.io,
-            i_OUTPUT_ENABLE=self.oe,
-            i_D_OUT_0=self.o,
-            o_D_IN_0=self.i,
-        )
-        m.submodules += p
-        return m
-
+import lsfr
 
 class Counter:
     def __init__(self, width):
@@ -45,7 +22,7 @@ class Blinker:
 
     def elaborate(self,platform):
         m = Module()
-        counter = get_lsfr()
+        counter = lsfr.get_lsfr() #lsfr.lsfr()
         m.submodules += counter
         m.d.comb += self.pin.eq(counter.o)
         return m
@@ -61,8 +38,8 @@ class Multi:
         for i,j in enumerate(self.names):
             b = Blinker(j,21+i)
             m.submodules += b
-            self.pins.append(Signal(name=j))
-            m.d.comb += self.pins[i].eq(b.pin)
+            self.pins.append(b.pin)
+            #m.d.comb += self.pins[i].eq(b.pin)
         return m
 
 
