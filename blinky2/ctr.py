@@ -1,5 +1,6 @@
 from nmigen import *
 from nmigen.cli import main, pysim
+from lsfr import get_lsfr
 
 
 class Pin:
@@ -39,12 +40,12 @@ class Counter:
 class Blinker:
     def __init__(self,pin,period):
         self.period = period
-        self.pin = Signal(name=pin) 
-        
+        self.pin = Signal(name=pin)
+
 
     def elaborate(self,platform):
         m = Module()
-        counter = Counter(self.period)
+        counter = get_lsfr()
         m.submodules += counter
         m.d.comb += self.pin.eq(counter.o)
         return m
@@ -53,7 +54,7 @@ class Multi:
     def __init__(self,pins):
         self.names= pins.split()
         self.pins = []
-        
+
     def elaborate(self,platform):
         m = Module()
         m.domains += ClockDomain(name="sync",reset_less=True)
@@ -64,7 +65,7 @@ class Multi:
             m.d.comb += self.pins[i].eq(b.pin)
         return m
 
-  
+
 #b = Blinker("PIN_13",21)
 #b = Blinker("PIN_13",21)
 b = Multi("LED PIN_12 PIN_13 PIN_14 PIN_15")
