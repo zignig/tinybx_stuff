@@ -8,7 +8,7 @@ from boneless.arch.disasm import disassemble
 end = False
 exit = False
 strin = ""
-debug = True 
+debug = True
 
 
 def io(addr, data=None):
@@ -43,7 +43,7 @@ cpu = BonelessSimulator(start_pc=0,mem_size=1024)
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "asm/forth.asm"
+    file_name = "demo.asm"
 asmblr = Assembler(debug=True, file_name=file_name)
 asmblr.assemble()
 asmblr.display()
