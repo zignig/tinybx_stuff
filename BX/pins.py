@@ -1,3 +1,47 @@
+"pin object"
+
+from nmigen import *
+
+class Pin:
+    def __init__(self,name,pin_name):
+        self.name = name
+        self.pin_name = pin_name
+        self.assigned = False
+        self.pin = Signal(name=name)
+        self.input = False
+        self.tristate = False
+
+    def set_input(self):
+        self.input = True
+
+    def pin_mode(self):
+        if self.input:
+            i = Signal()
+            o = Signal()
+            oe = Signal()
+            return Instance("SB_IO",
+                    p_PIN_TYPE=Const(0b0110_01,6),
+                    p_PULLUP=Const(0,1),
+                    io_PACKAGE_PIN=self.pin,
+                    o_D_IN_0=i,
+                    )
+        elif self.tristate:
+            i = Signal()
+            o = Signal()
+            oe = Signal()
+            return Instance("SB_IO",
+                    p_PIN_TYPE=Const(0b0110_01,6),
+                    p_PULLUP=Const(0,1),
+                    io_PACKAGE_PIN=self.pin,
+                    o_D_IN_0=i,
+                    i_D_OUT_0=o,
+                    io_OUTPUT_ENABLE=oe
+                    )
+        else:
+            return
+
+    def __repr__(self):
+        return self.name+'-'+self.pin_name+'-'+str(self.assigned)
 bxpins = {
     "PIN_1": "A2",
     "PIN_2": "A1",
