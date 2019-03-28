@@ -11,22 +11,41 @@ class Pin:
         self.pin_name = pin_name
         self.assigned = False
         self.pin = Signal(name=name)
+        self.input = False
+        self.tristate = False
+
+    def set_input(self):
+        self.input = True
+
+    def pin_mode(self):
+        if self.input:
+            i = Signal()
+            o = Signal()
+            oe = Signal()
+            return Instance("SB_IO",
+                    p_PIN_TYPE=Const(0b0110_01,6),
+                    p_PULLUP=Const(0,1),
+                    io_PACKAGE_PIN=self.pin,
+                    o_D_IN_0=i,
+                    )
+        elif self.tristate:
+            i = Signal()
+            o = Signal()
+            oe = Signal()
+            return Instance("SB_IO",
+                    p_PIN_TYPE=Const(0b0110_01,6),
+                    p_PULLUP=Const(0,1),
+                    io_PACKAGE_PIN=self.pin,
+                    o_D_IN_0=i,
+                    i_D_OUT_0=o,
+                    io_OUTPUT_ENABLE=oe
+                    )
+        else:
+            return
 
     def __repr__(self):
         return self.name+'-'+self.pin_name+'-'+str(self.assigned)
 
-def B(sig):
-    i = Signal()
-    o = Signal()
-    oe = Signal()
-    return Instance("SB_IO",
-            p_PIN_TYPE=Const(0b0110_01,6),
-            p_PULLUP=Const(0,1),
-            io_PACKAGE_PIN=sig,
-            o_D_IN_0=i,
-            i_D_OUT_0=o,
-            io_OUTPUT_ENABLE=oe
-            )
 
 class Device:
     " a device to add to the core "
@@ -84,6 +103,8 @@ class BX:
     def __init__(self):
         self.plat = BX_plat()
         self.add_device(Status('LED'))
+        self.plat.pins['PIN_13'].set_input()
+        self.plat.pins['PIN_19'].set_input()
         #TODO
         # internal devices and register that check that
         # that they are connected and have a sane way
@@ -108,8 +129,10 @@ class BX:
         # TODO auto hook up the pins
         for i in self.plat.devices:
             m.submodules += i
-        m.submodules += B(self.plat.pins['LED'].pin)
-        m.submodules += B(self.plat.pins['PIN_15'].pin)
+        for i in self.plat.pins:
+            mode = self.plat.pins[i].pin_mode()
+            if mode is not None:
+                m.submodules += mode
         return m
 
 b = BX()
