@@ -10,6 +10,7 @@ class Pin:
         self.name = name
         self.pin_name = pin_name
         self.assigned = False
+        self.pin = Signal(name=pin_name)
 
     def __repr__(self):
         return self.name+'-'+self.pin_name+'-'+str(self.assigned)
@@ -42,9 +43,8 @@ class BX_plat:
         active = []
         for i in self.pins:
             pin = self.pins[i]
-            print(pin)
-            if pin.assigned:
-                active.append(pin)
+            if pin.assigned ==True:
+                active.append(pin.pin)
         return active
 
     def add_device(self,dev):
@@ -73,18 +73,22 @@ class BX:
     def info(self):
         self.plat.info()
 
+    def prepare(self):
+        " build the fragment to assign pins"
+        Fragment.get(self,self.plat)
+
     def build(self):
         frag = Fragment.get(self,self.plat)
         print(verilog.convert(frag,ports=[self.status.pin]))
 
     def elaborate(self,platform):
         m = Module()
-        s = Signal(name='LED')
         # TODO auto hook up the pins
         for i in self.plat.devices:
             m.submodules += i
         return m
 
 b = BX()
+b.prepare()
 b.info()
 b.build()
