@@ -1,0 +1,18 @@
+[done]put signals into Pin object ,
+[done]scan and return active pins ports to top level elaboration
+create errors if pin is assigned twice
+[done]get_pin needs to return signal
+BX object needs some internal registers and logic
+port BonelessCPU to a device object to be added
+
+other devices
+- audio output
+- i2c , spi , external
+- internal flash interface 
+- sequencer
+- basic state machine 
+- combo button , modal with debounced press , and hold detection.
+
+test SB_IO funtionality, handle tristate pin signal assignment.
+
+
