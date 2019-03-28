@@ -7,7 +7,7 @@ from nmigen.cli import main
 
 
 class Boneless:
-    def __init__(self, has_pins=False, asmfile="demo.asm"):
+    def __init__(self, has_pins=False, asmfile="asm/demo.asm"):
         self.memory = Memory(width=16, depth=512)
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None
@@ -46,4 +46,4 @@ if __name__ == "__main__":
     tb= Boneless(has_pins=True)
     ios = (tb.pins,)
 
-    cli.main_runner(parser,args,tb,name="boneless",ports=ios)
+    cli.main_runner(parser,args,tb,name="boneless_core",ports=ios)
