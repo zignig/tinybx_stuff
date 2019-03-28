@@ -27,6 +27,7 @@ class BX_plat:
         self.pins = {}
         for i,j in pins.bxpins.items():
            self.pins[i] = Pin(i,j)
+        self.devices = []
 
     def get_pin(self,name):
         if name in self.pins:
@@ -53,9 +54,10 @@ class BX:
         self.plat = BX_plat()
         self.devices = []
         self.add_device(Status('LED'))
+        self.s = Signal(64)
 
     def add_device(self,dev):
-        self.devices.append(dev)
+        self.plat.devices.append(dev)
 
     def build(self):
         frag = Fragment.get(self,self.plat)
@@ -63,7 +65,7 @@ class BX:
 
     def elaborate(self,platform):
         m = Module()
-        for i in self.devices:
+        for i in self.plat.devices:
             m.submodules += i
         return m
 
