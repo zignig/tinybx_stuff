@@ -15,6 +15,19 @@ class Pin:
     def __repr__(self):
         return self.name+'-'+self.pin_name+'-'+str(self.assigned)
 
+def B(sig):
+    i = Signal()
+    o = Signal()
+    oe = Signal()
+    return Instance("SB_IO",
+            p_PIN_TYPE=Const(0b0110_01,6),
+            p_PULLUP=Const(0,1),
+            io_PACKAGE_PIN=sig,
+            o_D_IN_0=i,
+            i_D_OUT_0=o,
+            io_OUTPUT_ENABLE=oe
+            )
+
 class Device:
     " a device to add to the core "
     def __init__(self):
@@ -95,6 +108,8 @@ class BX:
         # TODO auto hook up the pins
         for i in self.plat.devices:
             m.submodules += i
+        m.submodules += B(self.plat.pins['LED'].pin)
+        m.submodules += B(self.plat.pins['PIN_15'].pin)
         return m
 
 b = BX()
