@@ -3,6 +3,7 @@ from . import pins
 from nmigen import *
 from nmigen.back import verilog
 from .status import Status
+from .button import Button
 from nmigen.hdl.ir import Fragment
 
 class Pin:
@@ -71,6 +72,11 @@ class BX_plat:
         else:
             raise BaseError
 
+    def set_input(self,name):
+        if name in self.pins:
+            p = self.pins[name]
+            p.input = True
+
     def pcf(self):
         active = []
         for i in self.pins:
@@ -103,8 +109,7 @@ class BX:
     def __init__(self):
         self.plat = BX_plat()
         self.add_device(Status('LED'))
-        self.plat.pins['PIN_13'].set_input()
-        self.plat.pins['PIN_19'].set_input()
+        self.add_device(Button('PIN_20'))
         #TODO
         # internal devices and register that check that
         # that they are connected and have a sane way
