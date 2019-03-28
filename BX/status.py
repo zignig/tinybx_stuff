@@ -1,7 +1,7 @@
 # status led device
 
 from nmigen import *
-from device import Device
+from .device import Device
 
 class Status(Device):
     def __init__(self,pin):

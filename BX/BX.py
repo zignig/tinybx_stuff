@@ -1,8 +1,8 @@
 " Basic framwork for a tinyFGPBx SOC"
-import pins
+from . import pins
 from nmigen import *
 from nmigen.back import verilog
-from status import Status
+from .status import Status
 from nmigen.hdl.ir import Fragment
 
 class Pin:
@@ -62,10 +62,6 @@ class BX:
     def __init__(self):
         self.plat = BX_plat()
         self.add_device(Status('LED'))
-        self.add_device(Status('PIN_12'))
-        self.add_device(Status('PIN_13'))
-        self.add_device(Status('PIN_14'))
-        self.add_device(Status('PIN_15'))
         self.s = Signal(64)
 
     def add_device(self,dev):

@@ -3,4 +3,4 @@ from nmigen import *
 class Device:
     " a device to add to the core "
     def __init__(self):
-        pass
+        print("WOOT device")
