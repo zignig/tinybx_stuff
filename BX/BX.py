@@ -39,6 +39,15 @@ class BX_plat:
         else:
             raise BaseError
 
+    def pcf(self):
+        active = []
+        for i in self.pins:
+            pin = self.pins[i]
+            if pin.assigned ==True:
+                active.append(pin)
+        for i in active:
+            print(i.name,i.pin_name)
+
     def active_pins(self):
         active = []
         for i in self.pins:
@@ -62,7 +71,10 @@ class BX:
     def __init__(self):
         self.plat = BX_plat()
         self.add_device(Status('LED'))
-        self.s = Signal(64)
+        #TODO
+        # internal devices and register that check that
+        # that they are connected and have a sane way
+        # of binding them
 
     def add_device(self,dev):
         self.plat.devices.append(dev)
