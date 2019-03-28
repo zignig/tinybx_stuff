@@ -61,10 +61,11 @@ class BX_plat:
 class BX:
     def __init__(self):
         self.plat = BX_plat()
-        self.devices = []
-        self.status = Status('LED')
-        self.add_device(self.status)
+        self.add_device(Status('LED'))
         self.add_device(Status('PIN_12'))
+        self.add_device(Status('PIN_13'))
+        self.add_device(Status('PIN_14'))
+        self.add_device(Status('PIN_15'))
         self.s = Signal(64)
 
     def add_device(self,dev):
@@ -79,7 +80,7 @@ class BX:
 
     def build(self):
         frag = Fragment.get(self,self.plat)
-        print(verilog.convert(frag,ports=self.plat.active_pins()))
+        print(verilog.convert(frag,name='top',ports=self.plat.active_pins()))
 
     def elaborate(self,platform):
         m = Module()
