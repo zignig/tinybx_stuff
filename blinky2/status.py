@@ -5,8 +5,7 @@ from device import Device
 
 class Status(Device):
     def __init__(self,pin):
-        #super(Device,self).__init__()
-        self.pin = Signal(name=pin)
+        super(Device,self).__init__()
         self.pin_n = pin
 
     def elaborate(self,platform):
@@ -15,7 +14,7 @@ class Status(Device):
         p = platform.get_pin(self.pin_n)
         print(p)
         m.d.sync += counter.eq(counter+1)
-        m.d.comb += self.pin.eq(counter[21])
+        m.d.comb += p.eq(counter[21])
         return m
 
 

@@ -10,7 +10,7 @@ class Pin:
         self.name = name
         self.pin_name = pin_name
         self.assigned = False
-        self.pin = Signal(name=pin_name)
+        self.pin = Signal(name=name)
 
     def __repr__(self):
         return self.name+'-'+self.pin_name+'-'+str(self.assigned)
@@ -35,7 +35,7 @@ class BX_plat:
             p = self.pins[name]
             print(p)
             p.assigned = True
-            return p
+            return p.pin
         else:
             raise BaseError
 
@@ -79,7 +79,7 @@ class BX:
 
     def build(self):
         frag = Fragment.get(self,self.plat)
-        print(verilog.convert(frag,ports=[self.status.pin]))
+        print(verilog.convert(frag,ports=self.plat.active_pins()))
 
     def elaborate(self,platform):
         m = Module()
