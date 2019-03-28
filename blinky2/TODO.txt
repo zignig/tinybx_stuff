@@ -1,0 +1,6 @@
+put signals into Pin object ,
+
+scan and return active pins ports to top level elaboration
+
+create errors if pin is assigned twice
+

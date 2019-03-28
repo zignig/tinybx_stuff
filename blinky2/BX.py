@@ -33,17 +33,26 @@ class BX_plat:
         if name in self.pins:
             p = self.pins[name]
             print(p)
+            p.assigned = True
             return p
         else:
             raise BaseError
+
+    def active_pins(self):
+        active = []
+        for i in self.pins:
+            pin = self.pins[i]
+            print(pin)
+            if pin.assigned:
+                active.append(pin)
+        return active
 
     def add_device(self,dev):
         self.devices.append(dev)
 
     def info(self):
         print('PINS')
-        for i in self.pins:
-            print(self.pins[i])
+        print(self.active_pins())
         print('DEVICES')
         for i in self.devices:
             print(i)
@@ -53,21 +62,29 @@ class BX:
     def __init__(self):
         self.plat = BX_plat()
         self.devices = []
-        self.add_device(Status('LED'))
+        self.status = Status('LED')
+        self.add_device(self.status)
+        self.add_device(Status('PIN_12'))
         self.s = Signal(64)
 
     def add_device(self,dev):
         self.plat.devices.append(dev)
 
+    def info(self):
+        self.plat.info()
+
     def build(self):
         frag = Fragment.get(self,self.plat)
-        print(verilog.convert(frag))
+        print(verilog.convert(frag,ports=[self.status.pin]))
 
     def elaborate(self,platform):
         m = Module()
+        s = Signal(name='LED')
+        # TODO auto hook up the pins
         for i in self.plat.devices:
             m.submodules += i
         return m
 
 b = BX()
+b.info()
 b.build()
