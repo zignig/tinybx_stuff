@@ -21,8 +21,8 @@ module boneless_tbx(
     // interface to the boneless cpu
     wire [2:0] usb_in_control;
     wire [7:0] usb_in_data;
-    wire [2:0] usb_out_control;
-    wire [7:0] usb_out_data;
+    wire [15:0] usb_out_control;
+    wire [15:0] usb_out_data;
     //assign debug = { uart_in_valid, uart_in_ready, reset, clk_48mhz };
 
     // usb uart - this instanciates the entire USB device.
@@ -39,7 +39,7 @@ module boneless_tbx(
         .uart_in_valid( usb_in_control[0]),
         .uart_in_ready( usb_in_control[1]),
 
-        .uart_out_data( usb_out_data),
+        .uart_out_data( usb_out_data[7:0]),
         .uart_out_valid( usb_out_control[0]),
         .uart_out_ready( usb_out_control[1])
 
@@ -55,9 +55,9 @@ module boneless_tbx(
         .clk(clk_48mhz),
         .rst(reset),
         .r_win(0),
-        .usb_in_control(usb_in_control),
+//        .usb_in_control(usb_in_control),
         .usb_out_control(usb_out_control),
-        .usb_in_data(usb_in_data),
+//        .usb_in_data(usb_in_data),
         .usb_out_data(usb_out_data),
         .pins(led),
     );

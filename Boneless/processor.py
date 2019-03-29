@@ -35,19 +35,19 @@ class Boneless:
             # usb control data
             with m.If(self.ext_port.addr == 256):
                 with m.If(self.ext_port.r_en):
-                   m.d.sync += self.ext_port.r_data.eq(self.usb_in_control)
+                   m.d.sync += self.ext_port.r_data.eq(self.usb_out_control)
             # usb data
             with m.If(self.ext_port.addr == 255):
                 with m.If(self.ext_port.r_en):
-                    m.d.sync += self.ext_port.r_data.eq(self.usb_in_data)
+                    m.d.sync += self.ext_port.r_data.eq(self.usb_out_data)
             # usb control data
-            with m.If(self.ext_port.addr == 254):
-                with m.If(self.ext_port.w_en):
-                    m.d.sync += self.usb_out_control.eq(self.ext_port.w_data)
-            # usb data
-            with m.If(self.ext_port.addr == 253):
-                with m.If(self.ext_port.w_en):
-                    m.d.sync += self.usb_out_data.eq(self.ext_port.w_data)
+#            with m.If(self.ext_port.addr == 254):
+#                with m.If(self.ext_port.w_en):
+#                    m.d.sync += self.usb_out_control.eq(self.ext_port.w_data)
+#            # usb data
+#            with m.If(self.ext_port.addr == 253):
+#                with m.If(self.ext_port.w_en):
+#                    m.d.sync += self.usb_out_data.eq(self.ext_port.w_data)
 
         m.submodules.mem_rdport = mem_rdport = self.memory.read_port(transparent=False)
         m.submodules.mem_wrport = mem_wrport = self.memory.write_port()
