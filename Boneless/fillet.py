@@ -43,7 +43,7 @@ cpu = BonelessSimulator(start_pc=0,mem_size=1024)
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "demo.asm"
+    file_name = "asm/echo.asm"
 asmblr = Assembler(debug=True, file_name=file_name)
 asmblr.assemble()
 asmblr.display()
