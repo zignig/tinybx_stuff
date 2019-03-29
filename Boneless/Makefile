@@ -46,7 +46,7 @@ prog: $(PROJTOP).bin
 	tinyprog -p $<
 
 clean:
-	rm -f $(PROJTOP).json $(PROJTOP).asc $(PROJTOP).rpt $(PROJTOP).bin pll.v
+	rm -f boneless_core.v $(PROJTOP).json $(PROJTOP).asc $(PROJTOP).rpt $(PROJTOP).bin pll.v
 
 .SECONDARY:
 .PHONY: all synth prog clean gui
