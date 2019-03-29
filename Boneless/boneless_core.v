@@ -92,9 +92,7 @@ endmodule
 
 (* top =  1  *)
 (* generator = "nMigen" *)
-module boneless_core(usb_in_data, rst, clk, r_win, pins, usb_out_control, usb_out_data, usb_in_control);
-  wire \$10 ;
-  wire \$12 ;
+module boneless_core(usb_out_data, rst, clk, r_win, pins, usb_out_control);
   wire \$2 ;
   wire \$4 ;
   wire \$6 ;
@@ -103,10 +101,6 @@ module boneless_core(usb_in_data, rst, clk, r_win, pins, usb_out_control, usb_ou
   reg [15:0] \$next\core_ext_r_data ;
   (* src = "processor.py:13" *)
   reg [15:0] \$next\pins ;
-  (* src = "processor.py:17" *)
-  reg [15:0] \$next\usb_out_control ;
-  (* src = "processor.py:18" *)
-  reg [15:0] \$next\usb_out_data ;
   (* src = "/usr/local/lib/python3.7/dist-packages/nmigen-0.1-py3.7.egg/nmigen/hdl/mem.py:160" *)
   input clk;
   (* src = "/usr/lib/python3.7/boneless/gateware/core_fsm.py:31" *)
@@ -140,28 +134,14 @@ module boneless_core(usb_in_data, rst, clk, r_win, pins, usb_out_control, usb_ou
   input [5:0] r_win;
   (* src = "/usr/local/lib/python3.7/dist-packages/nmigen-0.1-py3.7.egg/nmigen/hdl/ir.py:304" *)
   input rst;
-  (* src = "processor.py:15" *)
-  input [15:0] usb_in_control;
-  (* src = "processor.py:16" *)
-  input [15:0] usb_in_data;
-  (* init = 16'h0000 *)
   (* src = "processor.py:17" *)
-  output [15:0] usb_out_control;
-  reg [15:0] usb_out_control = 16'h0000;
-  (* init = 16'h0000 *)
+  input [15:0] usb_out_control;
   (* src = "processor.py:18" *)
-  output [15:0] usb_out_data;
-  reg [15:0] usb_out_data = 16'h0000;
-  assign \$10  = core_ext_addr == (* src = "processor.py:44" *) 8'hfe;
-  assign \$12  = core_ext_addr == (* src = "processor.py:48" *) 8'hfd;
+  input [15:0] usb_out_data;
   assign \$2  = core_ext_addr == (* src = "processor.py:29" *) 1'h0;
   assign \$4  = core_ext_addr == (* src = "processor.py:36" *) 9'h100;
   assign \$6  = core_ext_addr == (* src = "processor.py:40" *) 8'hff;
   assign \$8  = core_ext_addr == (* src = "processor.py:29" *) 1'h0;
-  always @(posedge clk)
-      usb_out_data <= \$next\usb_out_data ;
-  always @(posedge clk)
-      usb_out_control <= \$next\usb_out_control ;
   always @(posedge clk)
       pins <= \$next\pins ;
   always @(posedge clk)
@@ -716,14 +696,14 @@ module boneless_core(usb_in_data, rst, clk, r_win, pins, usb_out_control, usb_ou
       1'h1:
           casez (core_ext_r_en)
             1'h1:
-                \$next\core_ext_r_data  = usb_in_control;
+                \$next\core_ext_r_data  = usb_out_control;
           endcase
     endcase
     casez (\$6 )
       1'h1:
           casez (core_ext_r_en)
             1'h1:
-                \$next\core_ext_r_data  = usb_in_data;
+                \$next\core_ext_r_data  = usb_out_data;
           endcase
     endcase
     casez (rst)
@@ -743,34 +723,6 @@ module boneless_core(usb_in_data, rst, clk, r_win, pins, usb_out_control, usb_ou
     casez (rst)
       1'h1:
           \$next\pins  = 16'h0000;
-    endcase
-  end
-  always @* begin
-    \$next\usb_out_control  = usb_out_control;
-    casez (\$10 )
-      1'h1:
-          casez (core_ext_w_en)
-            1'h1:
-                \$next\usb_out_control  = core_ext_w_data;
-          endcase
-    endcase
-    casez (rst)
-      1'h1:
-          \$next\usb_out_control  = 16'h0000;
-    endcase
-  end
-  always @* begin
-    \$next\usb_out_data  = usb_out_data;
-    casez (\$12 )
-      1'h1:
-          casez (core_ext_w_en)
-            1'h1:
-                \$next\usb_out_data  = core_ext_w_data;
-          endcase
-    endcase
-    casez (rst)
-      1'h1:
-          \$next\usb_out_data  = 16'h0000;
     endcase
   end
 endmodule
@@ -1150,10 +1102,6 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   assign \$81  = + (* src = "/usr/lib/python3.7/boneless/gateware/core_fsm.py:16" *) \$82 ;
   assign \$86  = memory_r_data + (* src = "/usr/lib/python3.7/boneless/gateware/core_fsm.py:16" *) { i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5 };
   always @(posedge clk)
-      r_pc <= \$next\r_pc ;
-  always @(posedge clk)
-      fi_pc <= \$next\fi_pc ;
-  always @(posedge clk)
       r_z <= \$next\r_z ;
   always @(posedge clk)
       r_s <= \$next\r_s ;
@@ -1171,6 +1119,10 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
       r_insn <= \$next\r_insn ;
   always @(posedge clk)
       fsm_state <= \$next\fsm_state ;
+  always @(posedge clk)
+      r_pc <= \$next\r_pc ;
+  always @(posedge clk)
+      fi_pc <= \$next\fi_pc ;
   alu alu (
     .c_sel(alu_c_sel),
     .s_a(alu_s_a),
