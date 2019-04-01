@@ -92,31 +92,13 @@ endmodule
 
 (* top =  1  *)
 (* generator = "nMigen" *)
-module boneless_core(usb_out_ready, usb_out_valid, usb_in_ready, usb_out_data, rst, clk, r_win, pins, usb_in_data, usb_in_valid);
-  wire [15:0] \$10 ;
-  wire \$12 ;
-  wire [15:0] \$14 ;
-  wire \$16 ;
-  wire \$18 ;
+module boneless_core(clk, r_win, pins, usb_in_data, usb_out_data, usb_in_valid, usb_in_ready, usb_out_valid, usb_out_ready, rst);
   wire \$2 ;
-  wire \$20 ;
   wire \$4 ;
-  wire \$6 ;
-  wire \$8 ;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33" *)
   reg [15:0] \$next\core_ext_r_data ;
-  (* src = "processor.py:25" *)
-  reg \$next\flag ;
-  (* src = "processor.py:26" *)
-  reg \$next\flag2 ;
-  (* src = "processor.py:27" *)
-  reg \$next\in_valid ;
-  (* src = "processor.py:28" *)
-  reg \$next\out_ready ;
-  (* src = "processor.py:13" *)
+  (* src = "processor.py:65" *)
   reg [15:0] \$next\pins ;
-  (* src = "processor.py:15" *)
-  reg [15:0] \$next\usb_in_data ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:165" *)
   input clk;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31" *)
@@ -130,72 +112,40 @@ module boneless_core(usb_out_ready, usb_out_valid, usb_in_ready, usb_out_data, r
   wire [15:0] core_ext_w_data;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34" *)
   wire core_ext_w_en;
-  (* init = 1'h0 *)
-  (* src = "processor.py:25" *)
-  reg flag = 1'h0;
-  (* init = 1'h0 *)
-  (* src = "processor.py:26" *)
-  reg flag2 = 1'h0;
-  (* init = 1'h0 *)
-  (* src = "processor.py:27" *)
-  reg in_valid = 1'h0;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:86" *)
-  wire [8:0] mem_rdport_memory_r_addr;
+  wire [4:0] mem_rdport_memory_r_addr;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:88" *)
   wire [15:0] mem_rdport_memory_r_data;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:90" *)
   wire mem_rdport_memory_r_en;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:151" *)
-  wire [8:0] mem_wrport_memory_w_addr;
+  wire [4:0] mem_wrport_memory_w_addr;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:153" *)
   wire [15:0] mem_wrport_memory_w_data;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:155" *)
   wire mem_wrport_memory_w_en;
-  (* init = 1'h0 *)
-  (* src = "processor.py:28" *)
-  reg out_ready = 1'h0;
   (* init = 16'h0000 *)
-  (* src = "processor.py:13" *)
+  (* src = "processor.py:65" *)
   output [15:0] pins;
   reg [15:0] pins = 16'h0000;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:144" *)
-  input [5:0] r_win;
+  input [1:0] r_win;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/ir.py:304" *)
   input rst;
-  (* init = 16'h0000 *)
-  (* src = "processor.py:15" *)
-  output [15:0] usb_in_data;
-  reg [15:0] usb_in_data = 16'h0000;
-  (* src = "processor.py:20" *)
-  input usb_in_ready;
-  (* src = "processor.py:19" *)
-  input usb_in_valid;
-  (* src = "processor.py:16" *)
-  input [15:0] usb_out_data;
-  (* src = "processor.py:23" *)
-  input usb_out_ready;
-  (* src = "processor.py:22" *)
-  input usb_out_valid;
-  assign \$10  = pins | (* src = "processor.py:48" *) 1'h1;
-  assign \$12  = usb_out_ready == (* src = "processor.py:52" *) 1'h1;
-  assign \$14  = pins | (* src = "processor.py:53" *) 2'h2;
-  assign \$16  = usb_in_valid == (* src = "processor.py:47" *) 1'h1;
-  assign \$18  = usb_out_ready == (* src = "processor.py:52" *) 1'h1;
-  assign \$20  = core_ext_addr == (* src = "processor.py:60" *) 8'hff;
-  assign \$2  = core_ext_addr == (* src = "processor.py:40" *) 1'h0;
-  assign \$4  = core_ext_addr == (* src = "processor.py:60" *) 8'hff;
-  assign \$6  = core_ext_addr == (* src = "processor.py:40" *) 1'h0;
-  assign \$8  = usb_in_valid == (* src = "processor.py:47" *) 1'h1;
-  always @(posedge clk)
-      usb_in_data <= \$next\usb_in_data ;
-  always @(posedge clk)
-      flag <= \$next\flag ;
-  always @(posedge clk)
-      flag2 <= \$next\flag2 ;
-  always @(posedge clk)
-      out_ready <= \$next\out_ready ;
-  always @(posedge clk)
-      in_valid <= \$next\in_valid ;
+  (* src = "processor.py:71" *)
+  output [7:0] usb_in_data;
+  (* src = "processor.py:70" *)
+  output usb_in_ready;
+  (* src = "processor.py:69" *)
+  output usb_in_valid;
+  (* src = "processor.py:76" *)
+  output [7:0] usb_out_data;
+  (* src = "processor.py:75" *)
+  output usb_out_ready;
+  (* src = "processor.py:74" *)
+  output usb_out_valid;
+  assign \$2  = core_ext_addr == (* src = "processor.py:91" *) 1'h0;
+  assign \$4  = core_ext_addr == (* src = "processor.py:91" *) 1'h0;
   always @(posedge clk)
       pins <= \$next\pins ;
   always @(posedge clk)
@@ -216,7 +166,17 @@ module boneless_core(usb_out_ready, usb_out_valid, usb_in_ready, usb_out_data, r
     .r_win(r_win),
     .rst(rst)
   );
-  reg [15:0] memory [511:0];
+  loopback loopback (
+    .clk(clk),
+    .rst(rst),
+    .usb_in_data(usb_in_data),
+    .usb_in_ready(usb_in_ready),
+    .usb_in_valid(usb_in_valid),
+    .usb_out_data(usb_out_data),
+    .usb_out_ready(usb_out_ready),
+    .usb_out_valid(usb_out_valid)
+  );
+  reg [15:0] memory [31:0];
   initial begin
     memory[0] = 16'h0000;
     memory[1] = 16'h0000;
@@ -226,510 +186,30 @@ module boneless_core(usb_out_ready, usb_out_valid, usb_in_ready, usb_out_data, r
     memory[5] = 16'h0000;
     memory[6] = 16'h0000;
     memory[7] = 16'h0000;
-    memory[8] = 16'h8006;
-    memory[9] = 16'h4200;
-    memory[10] = 16'h5a01;
-    memory[11] = 16'h0846;
-    memory[12] = 16'h9801;
-    memory[13] = 16'h87fc;
-    memory[14] = 16'h7f00;
-    memory[15] = 16'h499c;
-    memory[16] = 16'h5940;
-    memory[17] = 16'h5801;
-    memory[18] = 16'h3880;
-    memory[19] = 16'h77f5;
-    memory[20] = 16'h77f4;
-    memory[21] = 16'h77f3;
-    memory[22] = 16'h77f2;
-    memory[23] = 16'h4300;
-    memory[24] = 16'h3b80;
-    memory[25] = 16'h77ef;
-    memory[26] = 16'h77ee;
-    memory[27] = 16'h77ed;
-    memory[28] = 16'h77ec;
-    memory[29] = 16'h87f3;
+    memory[8] = 16'h0000;
+    memory[9] = 16'h0000;
+    memory[10] = 16'h0000;
+    memory[11] = 16'h0000;
+    memory[12] = 16'h0000;
+    memory[13] = 16'h0000;
+    memory[14] = 16'h0000;
+    memory[15] = 16'h0000;
+    memory[16] = 16'h0000;
+    memory[17] = 16'h0000;
+    memory[18] = 16'h0000;
+    memory[19] = 16'h0000;
+    memory[20] = 16'h0000;
+    memory[21] = 16'h0000;
+    memory[22] = 16'h0000;
+    memory[23] = 16'h0000;
+    memory[24] = 16'h0000;
+    memory[25] = 16'h0000;
+    memory[26] = 16'h0000;
+    memory[27] = 16'h0000;
+    memory[28] = 16'h0000;
+    memory[29] = 16'h0000;
     memory[30] = 16'h0000;
     memory[31] = 16'h0000;
-    memory[32] = 16'h0000;
-    memory[33] = 16'h0000;
-    memory[34] = 16'h0000;
-    memory[35] = 16'h0000;
-    memory[36] = 16'h0000;
-    memory[37] = 16'h0000;
-    memory[38] = 16'h0000;
-    memory[39] = 16'h0000;
-    memory[40] = 16'h0000;
-    memory[41] = 16'h0000;
-    memory[42] = 16'h0000;
-    memory[43] = 16'h0000;
-    memory[44] = 16'h0000;
-    memory[45] = 16'h0000;
-    memory[46] = 16'h0000;
-    memory[47] = 16'h0000;
-    memory[48] = 16'h0000;
-    memory[49] = 16'h0000;
-    memory[50] = 16'h0000;
-    memory[51] = 16'h0000;
-    memory[52] = 16'h0000;
-    memory[53] = 16'h0000;
-    memory[54] = 16'h0000;
-    memory[55] = 16'h0000;
-    memory[56] = 16'h0000;
-    memory[57] = 16'h0000;
-    memory[58] = 16'h0000;
-    memory[59] = 16'h0000;
-    memory[60] = 16'h0000;
-    memory[61] = 16'h0000;
-    memory[62] = 16'h0000;
-    memory[63] = 16'h0000;
-    memory[64] = 16'h0000;
-    memory[65] = 16'h0000;
-    memory[66] = 16'h0000;
-    memory[67] = 16'h0000;
-    memory[68] = 16'h0000;
-    memory[69] = 16'h0000;
-    memory[70] = 16'h0000;
-    memory[71] = 16'h0000;
-    memory[72] = 16'h0000;
-    memory[73] = 16'h0000;
-    memory[74] = 16'h0000;
-    memory[75] = 16'h0000;
-    memory[76] = 16'h0000;
-    memory[77] = 16'h0000;
-    memory[78] = 16'h0000;
-    memory[79] = 16'h0000;
-    memory[80] = 16'h0000;
-    memory[81] = 16'h0000;
-    memory[82] = 16'h0000;
-    memory[83] = 16'h0000;
-    memory[84] = 16'h0000;
-    memory[85] = 16'h0000;
-    memory[86] = 16'h0000;
-    memory[87] = 16'h0000;
-    memory[88] = 16'h0000;
-    memory[89] = 16'h0000;
-    memory[90] = 16'h0000;
-    memory[91] = 16'h0000;
-    memory[92] = 16'h0000;
-    memory[93] = 16'h0000;
-    memory[94] = 16'h0000;
-    memory[95] = 16'h0000;
-    memory[96] = 16'h0000;
-    memory[97] = 16'h0000;
-    memory[98] = 16'h0000;
-    memory[99] = 16'h0000;
-    memory[100] = 16'h0000;
-    memory[101] = 16'h0000;
-    memory[102] = 16'h0000;
-    memory[103] = 16'h0000;
-    memory[104] = 16'h0000;
-    memory[105] = 16'h0000;
-    memory[106] = 16'h0000;
-    memory[107] = 16'h0000;
-    memory[108] = 16'h0000;
-    memory[109] = 16'h0000;
-    memory[110] = 16'h0000;
-    memory[111] = 16'h0000;
-    memory[112] = 16'h0000;
-    memory[113] = 16'h0000;
-    memory[114] = 16'h0000;
-    memory[115] = 16'h0000;
-    memory[116] = 16'h0000;
-    memory[117] = 16'h0000;
-    memory[118] = 16'h0000;
-    memory[119] = 16'h0000;
-    memory[120] = 16'h0000;
-    memory[121] = 16'h0000;
-    memory[122] = 16'h0000;
-    memory[123] = 16'h0000;
-    memory[124] = 16'h0000;
-    memory[125] = 16'h0000;
-    memory[126] = 16'h0000;
-    memory[127] = 16'h0000;
-    memory[128] = 16'h0000;
-    memory[129] = 16'h0000;
-    memory[130] = 16'h0000;
-    memory[131] = 16'h0000;
-    memory[132] = 16'h0000;
-    memory[133] = 16'h0000;
-    memory[134] = 16'h0000;
-    memory[135] = 16'h0000;
-    memory[136] = 16'h0000;
-    memory[137] = 16'h0000;
-    memory[138] = 16'h0000;
-    memory[139] = 16'h0000;
-    memory[140] = 16'h0000;
-    memory[141] = 16'h0000;
-    memory[142] = 16'h0000;
-    memory[143] = 16'h0000;
-    memory[144] = 16'h0000;
-    memory[145] = 16'h0000;
-    memory[146] = 16'h0000;
-    memory[147] = 16'h0000;
-    memory[148] = 16'h0000;
-    memory[149] = 16'h0000;
-    memory[150] = 16'h0000;
-    memory[151] = 16'h0000;
-    memory[152] = 16'h0000;
-    memory[153] = 16'h0000;
-    memory[154] = 16'h0000;
-    memory[155] = 16'h0000;
-    memory[156] = 16'h0000;
-    memory[157] = 16'h0000;
-    memory[158] = 16'h0000;
-    memory[159] = 16'h0000;
-    memory[160] = 16'h0000;
-    memory[161] = 16'h0000;
-    memory[162] = 16'h0000;
-    memory[163] = 16'h0000;
-    memory[164] = 16'h0000;
-    memory[165] = 16'h0000;
-    memory[166] = 16'h0000;
-    memory[167] = 16'h0000;
-    memory[168] = 16'h0000;
-    memory[169] = 16'h0000;
-    memory[170] = 16'h0000;
-    memory[171] = 16'h0000;
-    memory[172] = 16'h0000;
-    memory[173] = 16'h0000;
-    memory[174] = 16'h0000;
-    memory[175] = 16'h0000;
-    memory[176] = 16'h0000;
-    memory[177] = 16'h0000;
-    memory[178] = 16'h0000;
-    memory[179] = 16'h0000;
-    memory[180] = 16'h0000;
-    memory[181] = 16'h0000;
-    memory[182] = 16'h0000;
-    memory[183] = 16'h0000;
-    memory[184] = 16'h0000;
-    memory[185] = 16'h0000;
-    memory[186] = 16'h0000;
-    memory[187] = 16'h0000;
-    memory[188] = 16'h0000;
-    memory[189] = 16'h0000;
-    memory[190] = 16'h0000;
-    memory[191] = 16'h0000;
-    memory[192] = 16'h0000;
-    memory[193] = 16'h0000;
-    memory[194] = 16'h0000;
-    memory[195] = 16'h0000;
-    memory[196] = 16'h0000;
-    memory[197] = 16'h0000;
-    memory[198] = 16'h0000;
-    memory[199] = 16'h0000;
-    memory[200] = 16'h0000;
-    memory[201] = 16'h0000;
-    memory[202] = 16'h0000;
-    memory[203] = 16'h0000;
-    memory[204] = 16'h0000;
-    memory[205] = 16'h0000;
-    memory[206] = 16'h0000;
-    memory[207] = 16'h0000;
-    memory[208] = 16'h0000;
-    memory[209] = 16'h0000;
-    memory[210] = 16'h0000;
-    memory[211] = 16'h0000;
-    memory[212] = 16'h0000;
-    memory[213] = 16'h0000;
-    memory[214] = 16'h0000;
-    memory[215] = 16'h0000;
-    memory[216] = 16'h0000;
-    memory[217] = 16'h0000;
-    memory[218] = 16'h0000;
-    memory[219] = 16'h0000;
-    memory[220] = 16'h0000;
-    memory[221] = 16'h0000;
-    memory[222] = 16'h0000;
-    memory[223] = 16'h0000;
-    memory[224] = 16'h0000;
-    memory[225] = 16'h0000;
-    memory[226] = 16'h0000;
-    memory[227] = 16'h0000;
-    memory[228] = 16'h0000;
-    memory[229] = 16'h0000;
-    memory[230] = 16'h0000;
-    memory[231] = 16'h0000;
-    memory[232] = 16'h0000;
-    memory[233] = 16'h0000;
-    memory[234] = 16'h0000;
-    memory[235] = 16'h0000;
-    memory[236] = 16'h0000;
-    memory[237] = 16'h0000;
-    memory[238] = 16'h0000;
-    memory[239] = 16'h0000;
-    memory[240] = 16'h0000;
-    memory[241] = 16'h0000;
-    memory[242] = 16'h0000;
-    memory[243] = 16'h0000;
-    memory[244] = 16'h0000;
-    memory[245] = 16'h0000;
-    memory[246] = 16'h0000;
-    memory[247] = 16'h0000;
-    memory[248] = 16'h0000;
-    memory[249] = 16'h0000;
-    memory[250] = 16'h0000;
-    memory[251] = 16'h0000;
-    memory[252] = 16'h0000;
-    memory[253] = 16'h0000;
-    memory[254] = 16'h0000;
-    memory[255] = 16'h0000;
-    memory[256] = 16'h0000;
-    memory[257] = 16'h0000;
-    memory[258] = 16'h0000;
-    memory[259] = 16'h0000;
-    memory[260] = 16'h0000;
-    memory[261] = 16'h0000;
-    memory[262] = 16'h0000;
-    memory[263] = 16'h0000;
-    memory[264] = 16'h0000;
-    memory[265] = 16'h0000;
-    memory[266] = 16'h0000;
-    memory[267] = 16'h0000;
-    memory[268] = 16'h0000;
-    memory[269] = 16'h0000;
-    memory[270] = 16'h0000;
-    memory[271] = 16'h0000;
-    memory[272] = 16'h0000;
-    memory[273] = 16'h0000;
-    memory[274] = 16'h0000;
-    memory[275] = 16'h0000;
-    memory[276] = 16'h0000;
-    memory[277] = 16'h0000;
-    memory[278] = 16'h0000;
-    memory[279] = 16'h0000;
-    memory[280] = 16'h0000;
-    memory[281] = 16'h0000;
-    memory[282] = 16'h0000;
-    memory[283] = 16'h0000;
-    memory[284] = 16'h0000;
-    memory[285] = 16'h0000;
-    memory[286] = 16'h0000;
-    memory[287] = 16'h0000;
-    memory[288] = 16'h0000;
-    memory[289] = 16'h0000;
-    memory[290] = 16'h0000;
-    memory[291] = 16'h0000;
-    memory[292] = 16'h0000;
-    memory[293] = 16'h0000;
-    memory[294] = 16'h0000;
-    memory[295] = 16'h0000;
-    memory[296] = 16'h0000;
-    memory[297] = 16'h0000;
-    memory[298] = 16'h0000;
-    memory[299] = 16'h0000;
-    memory[300] = 16'h0000;
-    memory[301] = 16'h0000;
-    memory[302] = 16'h0000;
-    memory[303] = 16'h0000;
-    memory[304] = 16'h0000;
-    memory[305] = 16'h0000;
-    memory[306] = 16'h0000;
-    memory[307] = 16'h0000;
-    memory[308] = 16'h0000;
-    memory[309] = 16'h0000;
-    memory[310] = 16'h0000;
-    memory[311] = 16'h0000;
-    memory[312] = 16'h0000;
-    memory[313] = 16'h0000;
-    memory[314] = 16'h0000;
-    memory[315] = 16'h0000;
-    memory[316] = 16'h0000;
-    memory[317] = 16'h0000;
-    memory[318] = 16'h0000;
-    memory[319] = 16'h0000;
-    memory[320] = 16'h0000;
-    memory[321] = 16'h0000;
-    memory[322] = 16'h0000;
-    memory[323] = 16'h0000;
-    memory[324] = 16'h0000;
-    memory[325] = 16'h0000;
-    memory[326] = 16'h0000;
-    memory[327] = 16'h0000;
-    memory[328] = 16'h0000;
-    memory[329] = 16'h0000;
-    memory[330] = 16'h0000;
-    memory[331] = 16'h0000;
-    memory[332] = 16'h0000;
-    memory[333] = 16'h0000;
-    memory[334] = 16'h0000;
-    memory[335] = 16'h0000;
-    memory[336] = 16'h0000;
-    memory[337] = 16'h0000;
-    memory[338] = 16'h0000;
-    memory[339] = 16'h0000;
-    memory[340] = 16'h0000;
-    memory[341] = 16'h0000;
-    memory[342] = 16'h0000;
-    memory[343] = 16'h0000;
-    memory[344] = 16'h0000;
-    memory[345] = 16'h0000;
-    memory[346] = 16'h0000;
-    memory[347] = 16'h0000;
-    memory[348] = 16'h0000;
-    memory[349] = 16'h0000;
-    memory[350] = 16'h0000;
-    memory[351] = 16'h0000;
-    memory[352] = 16'h0000;
-    memory[353] = 16'h0000;
-    memory[354] = 16'h0000;
-    memory[355] = 16'h0000;
-    memory[356] = 16'h0000;
-    memory[357] = 16'h0000;
-    memory[358] = 16'h0000;
-    memory[359] = 16'h0000;
-    memory[360] = 16'h0000;
-    memory[361] = 16'h0000;
-    memory[362] = 16'h0000;
-    memory[363] = 16'h0000;
-    memory[364] = 16'h0000;
-    memory[365] = 16'h0000;
-    memory[366] = 16'h0000;
-    memory[367] = 16'h0000;
-    memory[368] = 16'h0000;
-    memory[369] = 16'h0000;
-    memory[370] = 16'h0000;
-    memory[371] = 16'h0000;
-    memory[372] = 16'h0000;
-    memory[373] = 16'h0000;
-    memory[374] = 16'h0000;
-    memory[375] = 16'h0000;
-    memory[376] = 16'h0000;
-    memory[377] = 16'h0000;
-    memory[378] = 16'h0000;
-    memory[379] = 16'h0000;
-    memory[380] = 16'h0000;
-    memory[381] = 16'h0000;
-    memory[382] = 16'h0000;
-    memory[383] = 16'h0000;
-    memory[384] = 16'h0000;
-    memory[385] = 16'h0000;
-    memory[386] = 16'h0000;
-    memory[387] = 16'h0000;
-    memory[388] = 16'h0000;
-    memory[389] = 16'h0000;
-    memory[390] = 16'h0000;
-    memory[391] = 16'h0000;
-    memory[392] = 16'h0000;
-    memory[393] = 16'h0000;
-    memory[394] = 16'h0000;
-    memory[395] = 16'h0000;
-    memory[396] = 16'h0000;
-    memory[397] = 16'h0000;
-    memory[398] = 16'h0000;
-    memory[399] = 16'h0000;
-    memory[400] = 16'h0000;
-    memory[401] = 16'h0000;
-    memory[402] = 16'h0000;
-    memory[403] = 16'h0000;
-    memory[404] = 16'h0000;
-    memory[405] = 16'h0000;
-    memory[406] = 16'h0000;
-    memory[407] = 16'h0000;
-    memory[408] = 16'h0000;
-    memory[409] = 16'h0000;
-    memory[410] = 16'h0000;
-    memory[411] = 16'h0000;
-    memory[412] = 16'h0000;
-    memory[413] = 16'h0000;
-    memory[414] = 16'h0000;
-    memory[415] = 16'h0000;
-    memory[416] = 16'h0000;
-    memory[417] = 16'h0000;
-    memory[418] = 16'h0000;
-    memory[419] = 16'h0000;
-    memory[420] = 16'h0000;
-    memory[421] = 16'h0000;
-    memory[422] = 16'h0000;
-    memory[423] = 16'h0000;
-    memory[424] = 16'h0000;
-    memory[425] = 16'h0000;
-    memory[426] = 16'h0000;
-    memory[427] = 16'h0000;
-    memory[428] = 16'h0000;
-    memory[429] = 16'h0000;
-    memory[430] = 16'h0000;
-    memory[431] = 16'h0000;
-    memory[432] = 16'h0000;
-    memory[433] = 16'h0000;
-    memory[434] = 16'h0000;
-    memory[435] = 16'h0000;
-    memory[436] = 16'h0000;
-    memory[437] = 16'h0000;
-    memory[438] = 16'h0000;
-    memory[439] = 16'h0000;
-    memory[440] = 16'h0000;
-    memory[441] = 16'h0000;
-    memory[442] = 16'h0000;
-    memory[443] = 16'h0000;
-    memory[444] = 16'h0000;
-    memory[445] = 16'h0000;
-    memory[446] = 16'h0000;
-    memory[447] = 16'h0000;
-    memory[448] = 16'h0000;
-    memory[449] = 16'h0000;
-    memory[450] = 16'h0000;
-    memory[451] = 16'h0000;
-    memory[452] = 16'h0000;
-    memory[453] = 16'h0000;
-    memory[454] = 16'h0000;
-    memory[455] = 16'h0000;
-    memory[456] = 16'h0000;
-    memory[457] = 16'h0000;
-    memory[458] = 16'h0000;
-    memory[459] = 16'h0000;
-    memory[460] = 16'h0000;
-    memory[461] = 16'h0000;
-    memory[462] = 16'h0000;
-    memory[463] = 16'h0000;
-    memory[464] = 16'h0000;
-    memory[465] = 16'h0000;
-    memory[466] = 16'h0000;
-    memory[467] = 16'h0000;
-    memory[468] = 16'h0000;
-    memory[469] = 16'h0000;
-    memory[470] = 16'h0000;
-    memory[471] = 16'h0000;
-    memory[472] = 16'h0000;
-    memory[473] = 16'h0000;
-    memory[474] = 16'h0000;
-    memory[475] = 16'h0000;
-    memory[476] = 16'h0000;
-    memory[477] = 16'h0000;
-    memory[478] = 16'h0000;
-    memory[479] = 16'h0000;
-    memory[480] = 16'h0000;
-    memory[481] = 16'h0000;
-    memory[482] = 16'h0000;
-    memory[483] = 16'h0000;
-    memory[484] = 16'h0000;
-    memory[485] = 16'h0000;
-    memory[486] = 16'h0000;
-    memory[487] = 16'h0000;
-    memory[488] = 16'h0000;
-    memory[489] = 16'h0000;
-    memory[490] = 16'h0000;
-    memory[491] = 16'h0000;
-    memory[492] = 16'h0000;
-    memory[493] = 16'h0000;
-    memory[494] = 16'h0000;
-    memory[495] = 16'h0000;
-    memory[496] = 16'h0000;
-    memory[497] = 16'h0000;
-    memory[498] = 16'h0000;
-    memory[499] = 16'h0000;
-    memory[500] = 16'h0000;
-    memory[501] = 16'h0000;
-    memory[502] = 16'h0000;
-    memory[503] = 16'h0000;
-    memory[504] = 16'h0000;
-    memory[505] = 16'h0000;
-    memory[506] = 16'h0000;
-    memory[507] = 16'h0000;
-    memory[508] = 16'h0000;
-    memory[509] = 16'h0000;
-    memory[510] = 16'h0000;
-    memory[511] = 16'h0000;
   end
   reg [15:0] _0_;
   always @(posedge clk) begin
@@ -746,13 +226,6 @@ module boneless_core(usb_out_ready, usb_out_valid, usb_in_ready, usb_out_data, r
                 \$next\core_ext_r_data  = pins;
           endcase
     endcase
-    casez (\$4 )
-      1'h1:
-          casez (core_ext_r_en)
-            1'h1:
-                \$next\core_ext_r_data  = usb_out_data;
-          endcase
-    endcase
     casez (rst)
       1'h1:
           \$next\core_ext_r_data  = 16'h0000;
@@ -760,76 +233,20 @@ module boneless_core(usb_out_ready, usb_out_valid, usb_in_ready, usb_out_data, r
   end
   always @* begin
     \$next\pins  = pins;
-    casez (\$6 )
+    \$next\pins [0] = usb_in_ready;
+    \$next\pins [1] = usb_in_valid;
+    \$next\pins [2] = usb_out_ready;
+    \$next\pins [3] = usb_out_valid;
+    casez (\$4 )
       1'h1:
           casez (core_ext_w_en)
             1'h1:
                 \$next\pins  = core_ext_w_data;
           endcase
     endcase
-    casez (\$8 )
-      1'h1:
-          \$next\pins  = \$10 ;
-    endcase
-    casez (\$12 )
-      1'h1:
-          \$next\pins  = \$14 ;
-    endcase
     casez (rst)
       1'h1:
           \$next\pins  = 16'h0000;
-    endcase
-  end
-  always @* begin
-    \$next\in_valid  = in_valid;
-    casez (\$16 )
-      1'h1:
-          \$next\in_valid  = usb_in_valid;
-    endcase
-    casez (rst)
-      1'h1:
-          \$next\in_valid  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\out_ready  = out_ready;
-    casez (\$18 )
-      1'h1:
-          \$next\out_ready  = usb_out_ready;
-    endcase
-    casez (rst)
-      1'h1:
-          \$next\out_ready  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\flag2  = flag2;
-    \$next\flag2  = usb_out_valid;
-    casez (rst)
-      1'h1:
-          \$next\flag2  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\flag  = flag;
-    \$next\flag  = usb_in_ready;
-    casez (rst)
-      1'h1:
-          \$next\flag  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\usb_in_data  = usb_in_data;
-    casez (\$20 )
-      1'h1:
-          casez (core_ext_w_en)
-            1'h1:
-                \$next\usb_in_data  = core_ext_w_data;
-          endcase
-    endcase
-    casez (rst)
-      1'h1:
-          \$next\usb_in_data  = 16'h0000;
     endcase
   end
 endmodule
@@ -850,13 +267,13 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   wire \$3 ;
   wire \$31 ;
   wire [15:0] \$33 ;
-  wire [9:0] \$35 ;
-  wire [9:0] \$36 ;
+  wire [5:0] \$35 ;
+  wire [5:0] \$36 ;
   wire \$38 ;
   wire [11:0] \$40 ;
   wire [11:0] \$41 ;
-  wire [9:0] \$43 ;
-  wire [9:0] \$44 ;
+  wire [8:0] \$43 ;
+  wire [8:0] \$44 ;
   wire [16:0] \$46 ;
   wire [16:0] \$47 ;
   wire \$49 ;
@@ -865,7 +282,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   wire [16:0] \$53 ;
   wire [15:0] \$55 ;
   wire [15:0] \$57 ;
-  wire [9:0] \$58 ;
+  wire [8:0] \$58 ;
   wire [15:0] \$61 ;
   wire \$63 ;
   wire \$65 ;
@@ -875,11 +292,11 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   wire [5:0] \$71 ;
   wire [5:0] \$72 ;
   wire [15:0] \$74 ;
-  wire [9:0] \$75 ;
+  wire [8:0] \$75 ;
   wire [16:0] \$78 ;
   wire [16:0] \$79 ;
   wire [15:0] \$81 ;
-  wire [9:0] \$82 ;
+  wire [8:0] \$82 ;
   wire [16:0] \$85 ;
   wire [16:0] \$86 ;
   wire \$9 ;
@@ -956,11 +373,11 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:165" *)
   reg [1:0] \$next\i_type2 ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:86" *)
-  reg [8:0] \$next\memory_r_addr ;
+  reg [4:0] \$next\memory_r_addr ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:90" *)
   reg \$next\memory_r_en ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:151" *)
-  reg [8:0] \$next\memory_w_addr ;
+  reg [4:0] \$next\memory_w_addr ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:153" *)
   reg [15:0] \$next\memory_w_data ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:155" *)
@@ -974,7 +391,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:150" *)
   reg [15:0] \$next\r_opA ;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:143" *)
-  reg [8:0] \$next\r_pc ;
+  reg [4:0] \$next\r_pc ;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:146" *)
   reg \$next\r_s ;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:152" *)
@@ -1094,13 +511,13 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:165" *)
   wire [1:0] i_type2;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:86" *)
-  output [8:0] memory_r_addr;
+  output [4:0] memory_r_addr;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:88" *)
   input [15:0] memory_r_data;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:90" *)
   output memory_r_en;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:151" *)
-  output [8:0] memory_w_addr;
+  output [4:0] memory_w_addr;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:153" *)
   output [15:0] memory_w_data;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:155" *)
@@ -1117,9 +534,9 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   (* init = 16'h0000 *)
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:150" *)
   reg [15:0] r_opA = 16'h0000;
-  (* init = 9'h008 *)
+  (* init = 5'h08 *)
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:143" *)
-  reg [8:0] r_pc = 9'h008;
+  reg [4:0] r_pc = 5'h08;
   (* init = 1'h0 *)
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:146" *)
   reg r_s = 1'h0;
@@ -1130,7 +547,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:148" *)
   reg r_v = 1'h0;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:144" *)
-  input [5:0] r_win;
+  input [1:0] r_win;
   (* init = 1'h0 *)
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:145" *)
   reg r_z = 1'h0;
@@ -1186,38 +603,28 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
   assign \$38  = s_cond == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:302" *) i_flag;
   assign \$3  = i_code5[4:1] == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:182" *) 1'h0;
   assign \$41  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) i_imm11;
-  assign \$44  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm8[7], i_imm8 };
+  assign \$44  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) i_imm8;
   assign \$47  = memory_r_data + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm8[7], i_imm8[7], i_imm8[7], i_imm8[7], i_imm8[7], i_imm8[7], i_imm8[7], i_imm8[7], i_imm8 };
   assign \$49  = r_shift == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:353" *) 1'h0;
   assign \$51  = r_shift == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:353" *) 1'h0;
   assign \$53  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:90" *) sru_r_o;
   assign \$55  = i_ext ? (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/ir.py:22" *) ext_r_data : memory_r_data;
-  assign \$58  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm8[7], i_imm8 };
+  assign \$58  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) i_imm8;
   assign \$5  = i_code5[4:1] == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:183" *) 1'h1;
-  assign \$57  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) \$58 ;
+  assign \$57  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) \$58 ;
   assign \$61  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:143" *) r_pc;
   assign \$63  = ~ (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:322" *) s_cmp;
   assign \$65  = r_shift == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:353" *) 1'h0;
   assign \$67  = ~ (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:395" *) i_ext;
   assign \$69  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:166" *) i_shift;
   assign \$72  = r_shift - (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:352" *) 1'h1;
-  assign \$75  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm8[7], i_imm8 };
-  assign \$74  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) \$75 ;
+  assign \$75  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) i_imm8;
+  assign \$74  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) \$75 ;
   assign \$7  = i_code5[4:2] == (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:184" *) 1'h1;
   assign \$79  = memory_r_data + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5 };
-  assign \$82  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm8[7], i_imm8 };
-  assign \$81  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) \$82 ;
+  assign \$82  = r_pc + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) i_imm8;
+  assign \$81  = + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:14" *) \$82 ;
   assign \$86  = memory_r_data + (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:16" *) { i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5[4], i_imm5 };
-  always @(posedge clk)
-      r_opA <= \$next\r_opA ;
-  always @(posedge clk)
-      r_insn <= \$next\r_insn ;
-  always @(posedge clk)
-      fsm_state <= \$next\fsm_state ;
-  always @(posedge clk)
-      r_pc <= \$next\r_pc ;
-  always @(posedge clk)
-      fi_pc <= \$next\fi_pc ;
   always @(posedge clk)
       r_z <= \$next\r_z ;
   always @(posedge clk)
@@ -1230,6 +637,16 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
       r_addr <= \$next\r_addr ;
   always @(posedge clk)
       r_shift <= \$next\r_shift ;
+  always @(posedge clk)
+      r_opA <= \$next\r_opA ;
+  always @(posedge clk)
+      r_insn <= \$next\r_insn ;
+  always @(posedge clk)
+      fsm_state <= \$next\fsm_state ;
+  always @(posedge clk)
+      r_pc <= \$next\r_pc ;
+  always @(posedge clk)
+      fi_pc <= \$next\fi_pc ;
   alu alu (
     .c_sel(alu_c_sel),
     .s_a(alu_s_a),
@@ -1466,7 +883,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
     \$next\s_insn  = \$27 ;
   end
   always @* begin
-    \$next\memory_r_addr  = 9'h000;
+    \$next\memory_r_addr  = 5'h00;
     casez (fsm_state)
       4'h0:
           \$next\memory_r_addr  = r_pc;
@@ -1484,7 +901,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
       4'h2:
           \$next\memory_r_addr  = { r_win, i_regX };
       4'h5:
-          \$next\memory_r_addr  = s_addr[8:0];
+          \$next\memory_r_addr  = s_addr[4:0];
       4'h4:
           \$next\memory_r_addr  = { r_win, i_regZ };
     endcase
@@ -1528,7 +945,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
     \$next\r_pc  = r_pc;
     casez (fsm_state)
       4'h0:
-          \$next\r_pc  = \$35 [8:0];
+          \$next\r_pc  = \$35 [4:0];
       4'h1:
           casez ({ i_clsC, i_clsI, i_clsM, i_clsS, i_clsA })
             5'bzzzz1:
@@ -1542,17 +959,17 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
             5'h1z:
                 casez (\$38 )
                   1'h1:
-                      \$next\r_pc  = \$40 [8:0];
+                      \$next\r_pc  = \$40 [4:0];
                 endcase
           endcase
       4'h8:
-          \$next\r_pc  = \$43 [8:0];
+          \$next\r_pc  = \$43 [4:0];
       4'h9:
-          \$next\r_pc  = \$46 [8:0];
+          \$next\r_pc  = \$46 [4:0];
     endcase
     casez (rst)
       1'h1:
-          \$next\r_pc  = 9'h008;
+          \$next\r_pc  = 5'h08;
     endcase
   end
   always @* begin
@@ -1716,7 +1133,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
     endcase
   end
   always @* begin
-    \$next\memory_w_addr  = 9'h000;
+    \$next\memory_w_addr  = 5'h00;
     casez (fsm_state)
       4'ha:
           \$next\memory_w_addr  = { r_win, i_regZ };
@@ -1725,7 +1142,7 @@ module core(r_win, ext_r_data, rst, clk, memory_r_addr, memory_r_en, memory_w_ad
       4'hc:
           \$next\memory_w_addr  = { r_win, i_regZ };
       4'hd:
-          \$next\memory_w_addr  = r_addr[8:0];
+          \$next\memory_w_addr  = r_addr[4:0];
       4'h6:
           \$next\memory_w_addr  = { r_win, i_regZ };
       4'he:
@@ -2040,7 +1457,7 @@ module formal(memory_w_data, memory_w_en, ext_addr, ext_r_data, ext_r_en, ext_w_
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/formal.py:22" *)
   wire fi_mem_w_en;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:151" *)
-  input [8:0] memory_w_addr;
+  input [4:0] memory_w_addr;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:153" *)
   input [15:0] memory_w_data;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:155" *)
@@ -2086,6 +1503,110 @@ module formal(memory_w_data, memory_w_en, ext_addr, ext_r_data, ext_r_en, ext_w_
   assign fi_mem_w_en = \$next\fi_mem_w_en ;
   assign fi_mem_w_data = \$next\fi_mem_w_data ;
   assign fi_mem_w_addr = \$next\fi_mem_w_addr ;
+endmodule
+
+(* generator = "nMigen" *)
+module loopback(clk, usb_in_valid, usb_out_ready, usb_in_data, usb_out_valid, usb_in_ready, usb_out_data, rst);
+  (* src = "processor.py:71" *)
+  reg [7:0] \$next\usb_in_data ;
+  (* src = "processor.py:70" *)
+  reg \$next\usb_in_ready ;
+  (* src = "processor.py:69" *)
+  reg \$next\usb_in_valid ;
+  (* src = "processor.py:76" *)
+  reg [7:0] \$next\usb_out_data ;
+  (* src = "processor.py:75" *)
+  reg \$next\usb_out_ready ;
+  (* src = "processor.py:74" *)
+  reg \$next\usb_out_valid ;
+  (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:165" *)
+  input clk;
+  (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/ir.py:304" *)
+  input rst;
+  (* init = 8'h00 *)
+  (* src = "processor.py:71" *)
+  output [7:0] usb_in_data;
+  reg [7:0] usb_in_data = 8'h00;
+  (* init = 1'h0 *)
+  (* src = "processor.py:70" *)
+  output usb_in_ready;
+  reg usb_in_ready = 1'h0;
+  (* init = 1'h0 *)
+  (* src = "processor.py:69" *)
+  output usb_in_valid;
+  reg usb_in_valid = 1'h0;
+  (* init = 8'h00 *)
+  (* src = "processor.py:76" *)
+  output [7:0] usb_out_data;
+  reg [7:0] usb_out_data = 8'h00;
+  (* init = 1'h0 *)
+  (* src = "processor.py:75" *)
+  output usb_out_ready;
+  reg usb_out_ready = 1'h0;
+  (* init = 1'h0 *)
+  (* src = "processor.py:74" *)
+  output usb_out_valid;
+  reg usb_out_valid = 1'h0;
+  always @(posedge clk)
+      usb_out_data <= \$next\usb_out_data ;
+  always @(posedge clk)
+      usb_in_ready <= \$next\usb_in_ready ;
+  always @(posedge clk)
+      usb_out_valid <= \$next\usb_out_valid ;
+  always @(posedge clk)
+      usb_in_data <= \$next\usb_in_data ;
+  always @(posedge clk)
+      usb_out_ready <= \$next\usb_out_ready ;
+  always @(posedge clk)
+      usb_in_valid <= \$next\usb_in_valid ;
+  always @* begin
+    \$next\usb_in_valid  = usb_in_valid;
+    \$next\usb_in_valid  = usb_in_valid;
+    casez (rst)
+      1'h1:
+          \$next\usb_in_valid  = 1'h0;
+    endcase
+  end
+  always @* begin
+    \$next\usb_out_ready  = usb_out_ready;
+    \$next\usb_out_ready  = usb_out_ready;
+    casez (rst)
+      1'h1:
+          \$next\usb_out_ready  = 1'h0;
+    endcase
+  end
+  always @* begin
+    \$next\usb_in_data  = usb_in_data;
+    \$next\usb_in_data  = usb_in_data;
+    casez (rst)
+      1'h1:
+          \$next\usb_in_data  = 8'h00;
+    endcase
+  end
+  always @* begin
+    \$next\usb_out_valid  = usb_out_valid;
+    \$next\usb_out_valid  = usb_in_valid;
+    casez (rst)
+      1'h1:
+          \$next\usb_out_valid  = 1'h0;
+    endcase
+  end
+  always @* begin
+    \$next\usb_in_ready  = usb_in_ready;
+    \$next\usb_in_ready  = usb_out_ready;
+    casez (rst)
+      1'h1:
+          \$next\usb_in_ready  = 1'h0;
+    endcase
+  end
+  always @* begin
+    \$next\usb_out_data  = usb_out_data;
+    \$next\usb_out_data  = usb_in_data;
+    casez (rst)
+      1'h1:
+          \$next\usb_out_data  = 8'h00;
+    endcase
+  end
 endmodule
 
 (* generator = "nMigen" *)
