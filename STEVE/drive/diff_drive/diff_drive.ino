@@ -78,13 +78,17 @@ void stopMotors(){
 void loop()
 {
   // Move forward for 2s @ speed 200
-  moveBot(true, 200, 2000);
+  moveBot(true, 255, 2000);
+  moveBot(false, 255, 2000);
+  stopMotors();
+  moveBot(true, 110, 2000);
+  moveBot(false, 110, 2000);
   // Rotate bot for 1s clockwise @ speed 150
-  rotateBot(true, 200, 1000);
+  //rotateBot(true, 200, 1000);
   // Move backward for 2s @ speed 200
-  moveBot(false, 200, 2000);
+  //moveBot(false, 200, 2000);
   // Rotate bot for 1s anti-clockwise @ speed 150
-  rotateBot(false, 200, 1000);
+  //rotateBot(false, 200, 1000);
   // Stop motors for 1s @ speed 200
   stopMotors();
   delay(1000);
