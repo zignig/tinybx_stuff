@@ -92,12 +92,12 @@ endmodule
 
 (* top =  1  *)
 (* generator = "nMigen" *)
-module boneless_core(clk, r_win, pins, usb_in_data, usb_out_data, usb_in_valid, usb_in_ready, usb_out_valid, usb_out_ready, rst);
+module boneless_core(clk, r_win, pins, rst);
   wire \$2 ;
   wire \$4 ;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33" *)
   reg [15:0] \$next\core_ext_r_data ;
-  (* src = "processor.py:65" *)
+  (* src = "processor.py:72" *)
   reg [15:0] \$next\pins ;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:165" *)
   input clk;
@@ -125,27 +125,15 @@ module boneless_core(clk, r_win, pins, usb_in_data, usb_out_data, usb_in_valid, 
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:155" *)
   wire mem_wrport_memory_w_en;
   (* init = 16'h0000 *)
-  (* src = "processor.py:65" *)
+  (* src = "processor.py:72" *)
   output [15:0] pins;
   reg [15:0] pins = 16'h0000;
   (* src = "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:144" *)
   input [1:0] r_win;
   (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/ir.py:304" *)
   input rst;
-  (* src = "processor.py:71" *)
-  output [7:0] usb_in_data;
-  (* src = "processor.py:70" *)
-  output usb_in_ready;
-  (* src = "processor.py:69" *)
-  output usb_in_valid;
-  (* src = "processor.py:76" *)
-  output [7:0] usb_out_data;
-  (* src = "processor.py:75" *)
-  output usb_out_ready;
-  (* src = "processor.py:74" *)
-  output usb_out_valid;
-  assign \$2  = core_ext_addr == (* src = "processor.py:91" *) 1'h0;
-  assign \$4  = core_ext_addr == (* src = "processor.py:91" *) 1'h0;
+  assign \$2  = core_ext_addr == (* src = "processor.py:98" *) 1'h0;
+  assign \$4  = core_ext_addr == (* src = "processor.py:98" *) 1'h0;
   always @(posedge clk)
       pins <= \$next\pins ;
   always @(posedge clk)
@@ -165,16 +153,6 @@ module boneless_core(clk, r_win, pins, usb_in_data, usb_out_data, usb_in_valid, 
     .memory_w_en(mem_wrport_memory_w_en),
     .r_win(r_win),
     .rst(rst)
-  );
-  loopback loopback (
-    .clk(clk),
-    .rst(rst),
-    .usb_in_data(usb_in_data),
-    .usb_in_ready(usb_in_ready),
-    .usb_in_valid(usb_in_valid),
-    .usb_out_data(usb_out_data),
-    .usb_out_ready(usb_out_ready),
-    .usb_out_valid(usb_out_valid)
   );
   reg [15:0] memory [31:0];
   initial begin
@@ -233,10 +211,6 @@ module boneless_core(clk, r_win, pins, usb_in_data, usb_out_data, usb_in_valid, 
   end
   always @* begin
     \$next\pins  = pins;
-    \$next\pins [0] = usb_in_ready;
-    \$next\pins [1] = usb_in_valid;
-    \$next\pins [2] = usb_out_ready;
-    \$next\pins [3] = usb_out_valid;
     casez (\$4 )
       1'h1:
           casez (core_ext_w_en)
@@ -1503,110 +1477,6 @@ module formal(memory_w_data, memory_w_en, ext_addr, ext_r_data, ext_r_en, ext_w_
   assign fi_mem_w_en = \$next\fi_mem_w_en ;
   assign fi_mem_w_data = \$next\fi_mem_w_data ;
   assign fi_mem_w_addr = \$next\fi_mem_w_addr ;
-endmodule
-
-(* generator = "nMigen" *)
-module loopback(clk, usb_in_valid, usb_out_ready, usb_in_data, usb_out_valid, usb_in_ready, usb_out_data, rst);
-  (* src = "processor.py:71" *)
-  reg [7:0] \$next\usb_in_data ;
-  (* src = "processor.py:70" *)
-  reg \$next\usb_in_ready ;
-  (* src = "processor.py:69" *)
-  reg \$next\usb_in_valid ;
-  (* src = "processor.py:76" *)
-  reg [7:0] \$next\usb_out_data ;
-  (* src = "processor.py:75" *)
-  reg \$next\usb_out_ready ;
-  (* src = "processor.py:74" *)
-  reg \$next\usb_out_valid ;
-  (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:165" *)
-  input clk;
-  (* src = "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/ir.py:304" *)
-  input rst;
-  (* init = 8'h00 *)
-  (* src = "processor.py:71" *)
-  output [7:0] usb_in_data;
-  reg [7:0] usb_in_data = 8'h00;
-  (* init = 1'h0 *)
-  (* src = "processor.py:70" *)
-  output usb_in_ready;
-  reg usb_in_ready = 1'h0;
-  (* init = 1'h0 *)
-  (* src = "processor.py:69" *)
-  output usb_in_valid;
-  reg usb_in_valid = 1'h0;
-  (* init = 8'h00 *)
-  (* src = "processor.py:76" *)
-  output [7:0] usb_out_data;
-  reg [7:0] usb_out_data = 8'h00;
-  (* init = 1'h0 *)
-  (* src = "processor.py:75" *)
-  output usb_out_ready;
-  reg usb_out_ready = 1'h0;
-  (* init = 1'h0 *)
-  (* src = "processor.py:74" *)
-  output usb_out_valid;
-  reg usb_out_valid = 1'h0;
-  always @(posedge clk)
-      usb_out_data <= \$next\usb_out_data ;
-  always @(posedge clk)
-      usb_in_ready <= \$next\usb_in_ready ;
-  always @(posedge clk)
-      usb_out_valid <= \$next\usb_out_valid ;
-  always @(posedge clk)
-      usb_in_data <= \$next\usb_in_data ;
-  always @(posedge clk)
-      usb_out_ready <= \$next\usb_out_ready ;
-  always @(posedge clk)
-      usb_in_valid <= \$next\usb_in_valid ;
-  always @* begin
-    \$next\usb_in_valid  = usb_in_valid;
-    \$next\usb_in_valid  = usb_in_valid;
-    casez (rst)
-      1'h1:
-          \$next\usb_in_valid  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\usb_out_ready  = usb_out_ready;
-    \$next\usb_out_ready  = usb_out_ready;
-    casez (rst)
-      1'h1:
-          \$next\usb_out_ready  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\usb_in_data  = usb_in_data;
-    \$next\usb_in_data  = usb_in_data;
-    casez (rst)
-      1'h1:
-          \$next\usb_in_data  = 8'h00;
-    endcase
-  end
-  always @* begin
-    \$next\usb_out_valid  = usb_out_valid;
-    \$next\usb_out_valid  = usb_in_valid;
-    casez (rst)
-      1'h1:
-          \$next\usb_out_valid  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\usb_in_ready  = usb_in_ready;
-    \$next\usb_in_ready  = usb_out_ready;
-    casez (rst)
-      1'h1:
-          \$next\usb_in_ready  = 1'h0;
-    endcase
-  end
-  always @* begin
-    \$next\usb_out_data  = usb_out_data;
-    \$next\usb_out_data  = usb_in_data;
-    casez (rst)
-      1'h1:
-          \$next\usb_out_data  = 8'h00;
-    endcase
-  end
 endmodule
 
 (* generator = "nMigen" *)

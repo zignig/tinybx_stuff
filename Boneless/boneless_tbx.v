@@ -19,14 +19,14 @@ module boneless_tbx(
     // -------------------------
     // USB serial
     // interface to the boneless cpu
-    wire [7:0] usb_in_data;
-    wire [7:0] usb_out_data;
+    reg [7:0] usb_in_data;
+    reg [7:0] usb_out_data;
 
-    wire usb_in_valid;
-    wire usb_in_ready;
+    reg usb_in_valid;
+    reg usb_in_ready;
 
-    wire usb_out_ready;
-    wire usb_out_valid;
+    reg usb_out_ready;
+    reg usb_out_valid;
     //assign debug = { uart_in_valid, uart_in_ready, reset, clk_48mhz };
 
     // usb uart - this instanciates the entire USB device.
@@ -56,13 +56,13 @@ module boneless_tbx(
 loopback looper (
 .clk(clk_48mhz),
 .rst(reset),
-.usb_in_valid(usb_in_valid),
-.usb_in_ready(usb_in_ready),
-.usb_in_data(usb_in_data),
-
-.usb_in_valid(usb_in_valid),
-.usb_out_ready(usb_out_ready),
-.usb_out_data(usb_out_data),
+.uiv(usb_in_valid),
+.uir(usb_in_ready),
+.uid(usb_in_data),
+.uov(usb_out_valid),
+.uor(usb_out_ready),
+.uod(usb_out_data),
+.leds(led)
 );
 // Directions for the uart
 //    // uart pipeline in (out of the device, into the host)

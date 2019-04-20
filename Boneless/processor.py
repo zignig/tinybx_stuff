@@ -26,7 +26,7 @@ class Buffer:
 
 class Loopback:
     " testing for pumping serial back"
-    def __init__(self,uiv,uir,uid,uov,uor,uod):
+    def __init__(self,uiv,uir,uid,uov,uor,uod,leds):
         self.uiv = uiv
         self.uir = uir
         self.uid = uid
@@ -34,8 +34,8 @@ class Loopback:
         self.uov = uov
         self.uor = uor
         self.uod = uod
+        self.leds = leds
     
-        self.data = Signal(8)
 
 #//      Directions for the uart
 #//    // uart pipeline in (out of the device, into the host)
@@ -50,12 +50,19 @@ class Loopback:
 
     def elaborate(self,platform):
         m = Module()
-        m.d.sync += self.uiv.eq(self.uiv)
-        m.d.sync += self.uor.eq(self.uor)
-        m.d.sync += self.uid.eq(self.uid)
-        m.d.sync += self.uov.eq(self.uiv)
-        m.d.sync += self.uir.eq(self.uor)
-        m.d.sync += self.uod.eq(self.uid)
+        data = Signal(8)
+        ready = Signal()
+        valid = Signal()
+
+        m.d.sync += self.leds[0].eq(ready)
+        m.d.sync += data.eq(self.uid)
+        m.d.sync += valid.eq(self.uov)
+        m.d.sync += ready.eq(self.uir)
+
+        m.d.sync += self.uiv.eq(valid)
+        m.d.sync += self.uov.eq(valid)
+        m.d.sync += self.uor.eq(ready)
+        m.d.sync += self.uod.eq(data)
         return m
 
 class Boneless:
@@ -77,7 +84,7 @@ class Boneless:
 
         #self.in_buffer = Buffer(self.usb_in_valid,self.usb_in_ready,self.usb_in_data)
         #self.out_buffer = Buffer(self.usb_out_valid,self.usb_out_ready,self.usb_out_data)
-        self.loopback = Loopback(self.usb_in_valid,self.usb_in_ready,self.usb_in_data,self.usb_out_valid,self.usb_out_ready,self.usb_out_data)
+        self.loopback = Loopback(self.usb_in_valid,self.usb_in_ready,self.usb_in_data,self.usb_out_valid,self.usb_out_ready,self.usb_out_data,self.pins)
         # Code
         code = Assembler(file_name=asmfile)
         code.assemble()
@@ -94,11 +101,7 @@ class Boneless:
                 with m.If(self.ext_port.w_en):
                     m.d.sync += self.pins.eq(self.ext_port.w_data)
 
-        m.d.sync += self.pins[0].eq(self.loopback.uir)
-        m.d.sync += self.pins[1].eq(self.loopback.uiv)
-        m.d.sync += self.pins[2].eq(self.loopback.uor)
-        m.d.sync += self.pins[3].eq(self.loopback.uov)
-        m.submodules.loopback = self.loopback
+        #m.submodules.loopback = self.loopback
         
 #        with m.If(self.ext_port.addr == 1):
 #            with m.If(self.ext_port.r_en):
