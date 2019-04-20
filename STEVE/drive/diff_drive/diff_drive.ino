@@ -6,6 +6,7 @@ int in2 = 8;
 int enB = 5;
 int in3 = 7;
 int in4 = 6;
+int sp = 255;
 
 void setup()
 {
@@ -21,18 +22,18 @@ void setup()
   digitalWrite(13, HIGH);
   delay(1900);
   digitalWrite(13, LOW);
-  delay(100);   
+  delay(100);
 
 }
 
 /*  Move forward function
- *  Dir (Boolean) { true: Forward,
- *        false: Backward }
- *  Spd (Int) { 0 <-> 255 }
- *  Dur (Int) { Duration (in ms) }
- */
- 
-void moveBot(bool dir, int spd, int dur){
+    Dir (Boolean) { true: Forward,
+          false: Backward }
+    Spd (Int) { 0 <-> 255 }
+    Dur (Int) { Duration (in ms) }
+*/
+
+void moveBot(bool dir, int spd, int dur) {
   // Motor A
   digitalWrite(in1, dir);
   digitalWrite(in2, !dir);  //The '!' symbol inverts the boolean value. So for example, if dir is true, !dir is false.
@@ -47,13 +48,13 @@ void moveBot(bool dir, int spd, int dur){
 }
 
 /*  Rotate function
- *  Dir (Boolean) { true: Clockwise,
- *        false: Anti-clockwise }
- *  Spd (Int) { 0 <-> 255 }
- *  Dur (Int) { Duration (in ms) }
- */
+    Dir (Boolean) { true: Clockwise,
+          false: Anti-clockwise }
+    Spd (Int) { 0 <-> 255 }
+    Dur (Int) { Duration (in ms) }
+*/
 
-void rotateBot(bool dir, int spd, int dur){
+void rotateBot(bool dir, int spd, int dur) {
   // Motor A
   digitalWrite(in1, dir);
   digitalWrite(in2, !dir);  //The '!' symbol inverts the boolean value. So for example, if dir is true, !dir is false.
@@ -68,28 +69,27 @@ void rotateBot(bool dir, int spd, int dur){
 }
 
 //Turn off both motors
-void stopMotors(){
+void stopMotors() {
   digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW);  
+  digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW); 
+  digitalWrite(in4, LOW);
 }
 
 void loop()
 {
   // Move forward for 2s @ speed 200
-  moveBot(true, 255, 2000);
-  moveBot(false, 255, 2000);
-  stopMotors();
-  moveBot(true, 110, 2000);
-  moveBot(false, 110, 2000);
+  moveBot(true, sp, 2000);
+
+  //stopMotors();
   // Rotate bot for 1s clockwise @ speed 150
-  //rotateBot(true, 200, 1000);
+  rotateBot(true, sp, 3000);
   // Move backward for 2s @ speed 200
-  //moveBot(false, 200, 2000);
+  moveBot(false, sp, 2000);
   // Rotate bot for 1s anti-clockwise @ speed 150
-  //rotateBot(false, 200, 1000);
+  rotateBot(false, sp, 3000);
   // Stop motors for 1s @ speed 200
+  moveBot(false, sp, 2000);
   stopMotors();
   delay(1000);
 }
