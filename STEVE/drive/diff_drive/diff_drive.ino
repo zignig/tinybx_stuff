@@ -1,5 +1,5 @@
 // Left Motor (A)
-int enA = 10;
+int enA = 3;
 int in1 = 9;
 int in2 = 8;
 // Right Motor (B)

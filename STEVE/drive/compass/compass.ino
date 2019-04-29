@@ -51,5 +51,5 @@ void loop()
   Serial.print(".");
   Serial.print(int (headingValue % 10));     // The fractional part of the heading
   Serial.println(" degrees");
-  delay(500);
+  delay(100);
 } 
