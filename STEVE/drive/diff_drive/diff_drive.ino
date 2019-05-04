@@ -6,7 +6,7 @@ int in2 = 8;
 int enB = 5;
 int in3 = 7;
 int in4 = 6;
-int sp = 255;
+int sp = 150;
 
 void setup()
 {
@@ -79,17 +79,17 @@ void stopMotors() {
 void loop()
 {
   // Move forward for 2s @ speed 200
-  moveBot(true, sp, 2000);
+  moveBot(true, sp, 1000);
 
   //stopMotors();
   // Rotate bot for 1s clockwise @ speed 150
-  rotateBot(true, sp, 3000);
+  rotateBot(true, sp, 1000);
   // Move backward for 2s @ speed 200
-  moveBot(false, sp, 2000);
+  moveBot(false, sp, 1000);
   // Rotate bot for 1s anti-clockwise @ speed 150
-  rotateBot(false, sp, 3000);
+  rotateBot(false, sp, 1000);
   // Stop motors for 1s @ speed 200
-  moveBot(false, sp, 2000);
+  moveBot(false, sp, 1000);
   stopMotors();
   delay(1000);
 }
