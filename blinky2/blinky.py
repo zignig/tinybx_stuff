@@ -2,7 +2,7 @@ from nmigen import *
 from nmigen.cli import main, pysim
 import lsfr
 
-class Counter:
+class Counter(Elaboratable):
     def __init__(self, width):
         self.v = Signal(width, reset=2 ** width - 1)
         self.o = Signal()
@@ -14,7 +14,7 @@ class Counter:
         return m
 
 
-class Blinker:
+class Blinker(Elaboratable):
     def __init__(self,pin,period):
         self.period = period
         self.pin = Signal(name=pin)
@@ -27,7 +27,7 @@ class Blinker:
         m.d.comb += self.pin.eq(counter.o)
         return m
 
-class Multi:
+class Multi(Elaboratable):
     def __init__(self,pins):
         self.names= pins.split()
         self.pins = []
