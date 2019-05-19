@@ -20,4 +20,5 @@ def gen_output():
 a = {}
 if __name__ == "__main__":
     a = gen_output()
+    a = 'seq = ' + str(a)
     print(a)
