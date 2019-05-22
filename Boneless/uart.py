@@ -1,253 +1,123 @@
-"""
-A UART transmitter.
-
-Copyright 2017 Adam Greig
-Released under the MIT license; see LICENSE for details.
-"""
-
-from migen import Module, Signal, If, FSM, NextValue, NextState, Array
+from nmigen import *
+from nmigen.lib.cdc import MultiReg
 
 
-class UARTTx(Module):
-    """
-    UART Transmitter.
-    """
-    def __init__(self, divider):
-        """
-        Parameters:
-            * `divider`: amount to divide clock by for baud rate, constant.
+__all__ = ["RS232RX", "RS232TX"]
 
-        Inputs:
-            * `data`: 8bit Signal containing data to transmit.
-            * `start`: pulse high to begin transmission, for at least one
-                       bit period. Assert `start` until `self.ready`
-                       is deasserted.
 
-        Outputs:
-            * `ready`: asserted high when idle
-            * `tx_out`: the output serial data
-        """
-        # Inputs
+class RS232RX(Elaboratable):
+    def __init__(self, tuning_word):
+        self.rx = Signal()
         self.data = Signal(8)
-        self.start = Signal()
+        self.stb = Signal()
+        self.tuning_word = tuning_word
 
-        # Outputs
-        self.ready = Signal()
-        self.tx_out = Signal()
+    def elaborate(self, platform):
+        m = Module()
 
-        ###
+        uart_clk_rxen = Signal()
+        phase_accumulator_rx = Signal(32)
 
-        # Baud rate clock generator
-        self.div = Signal(max=divider - 1)
-        self.baud = Signal()
-        self.sync += If(
-            self.div == divider - 1,
-            self.div.eq(0),
-            self.baud.eq(1),
-        ).Else(
-            self.div.eq(self.div + 1),
-            self.baud.eq(0)
-        )
-
-        # Transmitter state machine
-        self.bitno = Signal(3)
-        self.submodules.fsm = FSM(reset_state="IDLE")
-        self.comb += self.ready.eq(self.fsm.ongoing("IDLE"))
-        self.fsm.act(
-            "IDLE",
-            self.tx_out.eq(1),
-            If(self.baud & self.start, NextState("START"))
-        )
-        self.fsm.act(
-            "START",
-            self.tx_out.eq(0),
-            NextValue(self.bitno, 0),
-            If(self.baud, NextState("DATA"))
-        )
-        self.fsm.act(
-            "DATA",
-            self.tx_out.eq(Array(self.data)[self.bitno]),
-            If(
-                self.baud,
-                NextValue(self.bitno, self.bitno + 1),
-                If(self.bitno == 7, NextState("STOP"))
-            )
-        )
-        self.fsm.act(
-            "STOP",
-            self.tx_out.eq(1),
-            If(self.baud, NextState("IDLE"))
-        )
-
-
-class UARTTxFromMemory(Module):
-    """
-    Given a port into a memory, provide for dumping the memory over a UART.
-    """
-    def __init__(self, divider, awidth, port):
-        """
-        Parameters:
-            * `divider`: the UART baud rate divider (=clk/baud)
-            * `awidth`: the width of the address bus
-
-        Ports:
-            * `port`: a read port to a Memory instance
-
-        Inputs:
-            * `startadr`: the first address to transmit
-            * `stopadr`: the last address to transmit
-            * `trigger`: transmission begins when pulsed high
-
-        Outputs:
-            * `self.ready`: low while transmitting
-            * `self.tx_out`: the TX output
-        """
-        # Inputs
-        self.startadr = Signal(awidth)
-        self.stopadr = Signal(awidth)
-        self.trigger = Signal()
-
-        # Outputs
-        self.ready = Signal()
-        self.tx_out = Signal()
-
-        ###
-
-        self.uart_data = Signal(8)
-        self.uart_start = Signal()
-        self.submodules.uart = UARTTx(divider)
-        self.comb += [
-            self.uart.data.eq(self.uart_data),
-            self.uart.start.eq(self.uart_start),
-            self.tx_out.eq(self.uart.tx_out),
+        rx = Signal()
+        m.submodules += MultiReg(self.rx, rx)
+        rx_r = Signal()
+        rx_reg = Signal(8)
+        rx_bitcount = Signal(4)
+        rx_busy = Signal()
+        rx_done = self.stb
+        rx_data = self.data
+        m.d.sync += [
+            rx_done.eq(0),
+            rx_r.eq(rx)
         ]
+        with m.If(~rx_busy):
+            with m.If(~rx & rx_r):  # look for start bit
+                m.d.sync += [
+                    rx_busy.eq(1),
+                    rx_bitcount.eq(0)
+                ]
+        with m.Else():
+            with m.If(uart_clk_rxen):
+                m.d.sync += rx_bitcount.eq(rx_bitcount + 1)
+                with m.If(rx_bitcount == 0):
+                    with m.If(rx):  # verify start bit
+                        m.d.sync += rx_busy.eq(0)
+                with m.Elif(rx_bitcount == 9):
+                    m.d.sync += rx_busy.eq(0)
+                    with m.If(rx):  # verify stop bit
+                        m.d.sync += [
+                            rx_data.eq(rx_reg),
+                            rx_done.eq(1)
+                        ]
+                with m.Else():
+                    m.d.sync += rx_reg.eq(Cat(rx_reg[1:], rx))
+        with m.If(rx_busy):
+            m.d.sync += Cat(phase_accumulator_rx, uart_clk_rxen).eq(phase_accumulator_rx + self.tuning_word)
+        with m.Else():
+            m.d.sync += Cat(phase_accumulator_rx, uart_clk_rxen).eq(2**31)
 
-        self.adr = Signal(awidth)
-        self.submodules.fsm = FSM(reset_state="IDLE")
-        self.comb += self.ready.eq(self.fsm.ongoing("IDLE"))
-        self.fsm.act(
-            "IDLE",
-            NextValue(self.adr, self.startadr),
-            If(self.trigger, NextState("SETUP_READ"))
-        )
-        self.fsm.act(
-            "SETUP_READ",
-            NextValue(port.adr, self.adr),
-            NextState("WAIT_READ")
-        )
-        self.fsm.act(
-            "WAIT_READ",
-            NextState("STORE_READ")
-        )
-        self.fsm.act(
-            "STORE_READ",
-            NextValue(self.uart_data, port.dat_r),
-            NextValue(self.adr, self.adr + 1),
-            NextState("SETUP_WRITE"),
-        )
-        self.fsm.act(
-            "SETUP_WRITE",
-            NextValue(self.uart_start, 1),
-            If(self.uart.ready == 0, NextState("WAIT_WRITE"))
-        )
-        self.fsm.act(
-            "WAIT_WRITE",
-            NextValue(self.uart_start, 0),
-            If(self.uart.ready, NextState("FINISH_WRITE"))
-        )
-        self.fsm.act(
-            "FINISH_WRITE",
-            If(
-                self.adr == self.stopadr,
-                NextState("IDLE")
-            ).Else(
-                NextState("SETUP_READ")
-            )
-        )
+        return m
 
-
-def test_uart_tx():
-    from migen.sim import run_simulation
-    divider = 10
-    data = Signal(8)
-    start = Signal()
-    tx = UARTTx(divider)
-    tx.comb += tx.data.eq(data)
-    tx.comb += tx.start.eq(start)
-    txout = []
-
-    def tb():
-        teststring = "Hello World"
-        for val in [ord(x) for x in teststring]:
-            yield (data.eq(val))
-            yield (start.eq(1))
-            while (yield tx.ready):
-                yield
-            yield (start.eq(0))
-            while not (yield tx.ready):
-                txout.append((yield tx.tx_out))
-                yield
-
-        expected_bits = []
-        for c in [ord(x) for x in teststring]:
-            # Start bit
-            expected_bits.append(0)
-            # Data, LSbit first
-            for bit in "{:08b}".format(c)[::-1]:
-                expected_bits.append(int(bit))
-            # Stop bit
-            expected_bits.append(1)
-
-        assert txout[::divider] == expected_bits
-
-    run_simulation(tx, tb())
-
-
-def test_uart_tx_from_memory():
-    from migen.sim import run_simulation
-    from migen import Memory
-
-    # Store some string in the memory, shifted left by 4 so each
-    # character takes up 12 bits.
-    teststring = "0123456789ABCDEF"
-    mem = Memory(8, 16, [ord(x) for x in teststring])
-    port = mem.get_port()
-
-    divider = 10
-    trigger = Signal()
-    uartfrommem = UARTTxFromMemory(divider, 5, port)
-    uartfrommem.comb += [
-        uartfrommem.startadr.eq(0),
-        uartfrommem.stopadr.eq(16),
-        uartfrommem.trigger.eq(trigger),
-    ]
-
-    uartfrommem.specials += [mem, port]
-    txout = []
-
-    def tb():
-        yield
-        yield (trigger.eq(1))
-        yield
-        while (yield uartfrommem.ready):
+    def read(self):
+        while not (yield self.stb):
             yield
-        while not (yield uartfrommem.ready):
-            if (yield uartfrommem.uart.baud):
-                txout.append((yield uartfrommem.tx_out))
+        value = yield self.data
+        # clear stb, otherwise multiple calls to this generator keep returning the same value
+        yield
+        return value
+
+
+class RS232TX(Elaboratable):
+    def __init__(self, tuning_word):
+        self.tx = Signal(reset=1)
+        self.data = Signal(8)
+        self.stb = Signal()
+        self.ack = Signal()
+        self.tuning_word = tuning_word
+
+    def elaborate(self, platform):
+        m = Module()
+
+        uart_clk_txen = Signal()
+        phase_accumulator_tx = Signal(32)
+
+        tx_reg = Signal(8)
+        tx_bitcount = Signal(4)
+        tx_busy = Signal()
+        m.d.sync += self.ack.eq(0)
+        with m.If(self.stb & ~tx_busy & ~self.ack):
+            m.d.sync += [
+                tx_reg.eq(self.data),
+                tx_bitcount.eq(0),
+                tx_busy.eq(1),
+                self.tx.eq(0)
+            ]
+        with m.Elif(uart_clk_txen & tx_busy):
+            m.d.sync += tx_bitcount.eq(tx_bitcount + 1)
+            with m.If(tx_bitcount == 8):
+                m.d.sync += self.tx.eq(1)
+            with m.Elif(tx_bitcount == 9):
+                m.d.sync += [
+                    self.tx.eq(1),
+                    tx_busy.eq(0),
+                    self.ack.eq(1)
+                ]
+            with m.Else():
+                m.d.sync += [
+                    self.tx.eq(tx_reg[0]),
+                    tx_reg.eq(Cat(tx_reg[1:], 0))
+                ]
+        with m.If(tx_busy):
+            m.d.sync += Cat(phase_accumulator_tx, uart_clk_txen).eq(phase_accumulator_tx + self.tuning_word)
+        with m.Else():
+            m.d.sync += Cat(phase_accumulator_tx, uart_clk_txen).eq(0)
+
+        return m
+
+    def write(self, data):
+        yield self.stb.eq(1)
+        yield self.data.eq(data)
+        yield
+        while not (yield self.ack):
             yield
-
-        # Generate the bits we expect to see
-        expected_bits = [1]
-        for c in [ord(x) for x in teststring]:
-            # Start bit
-            expected_bits.append(0)
-            # Data, LSbit first, bottom byte
-            for bit in "{:08b}".format(c)[::-1]:
-                expected_bits.append(int(bit))
-            # Stop bit, inter-byte idle bit as we prepare the next byte
-            expected_bits.append(1)
-            expected_bits.append(1)
-
-        assert txout == expected_bits[:-1]
-
-    run_simulation(uartfrommem, tb())
+        yield self.stb.eq(0)

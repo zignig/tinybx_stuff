@@ -7,6 +7,8 @@ from nmigen.cli import main
 
 from nmigen.lib.fifo import SyncFIFO
 
+from uart_base import u
+
 class Buffer:
     " fifo bound to the valid/ready signals "
     def __init__(self,valid,ready,data,width=8,depth=5):
@@ -65,13 +67,14 @@ class Loopback:
         m.d.sync += self.uod.eq(data)
         return m
 
-class Boneless:
+class Boneless(Elaboratable):
     def __init__(self, has_pins=False, asmfile="asm/echo.asm"):
         self.memory = Memory(width=16, depth=32)
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None
+        # uart interface 
         # usb interface
-
+        self.uart = u(9600)
         # fifo signals
         self.usb_in_valid = Signal()
         self.usb_in_ready = Signal()
@@ -93,6 +96,7 @@ class Boneless:
     def elaborate(self, platform):
         m = Module()
 
+        m.submodules.uart = self.uart
         if self.pins is not None:
             # blinky on port address 0
             with m.If(self.ext_port.addr == 0):

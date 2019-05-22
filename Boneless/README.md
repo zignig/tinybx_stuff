@@ -1,5 +1,7 @@
 # Boneless processor,
+uart stolen from 
 
-uart stolen from  https://github.com/adamgrieg/daqnet
+https://git.m-labs.hk/M-Labs/HeavyX/raw/branch/master/heavycomps/heavycomps/uart.py
+
 
 
