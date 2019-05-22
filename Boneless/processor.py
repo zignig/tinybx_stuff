@@ -37,7 +37,7 @@ class Loopback:
         self.uor = uor
         self.uod = uod
         self.leds = leds
-    
+
 
 #//      Directions for the uart
 #//    // uart pipeline in (out of the device, into the host)
@@ -72,7 +72,7 @@ class Boneless(Elaboratable):
         self.memory = Memory(width=16, depth=32)
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None
-        # uart interface 
+        # uart interface
         # usb interface
         self.uart = u(9600)
         # fifo signals
@@ -105,8 +105,11 @@ class Boneless(Elaboratable):
                 with m.If(self.ext_port.w_en):
                     m.d.sync += self.pins.eq(self.ext_port.w_data)
 
+            with m.If(sefl.ext_port.addrr == 0):
+                with m.If(self.ex_port.r_en):
+                    m.d.sync += self.uart.tx.eq(1)
         #m.submodules.loopback = self.loopback
-        
+
 #        with m.If(self.ext_port.addr == 1):
 #            with m.If(self.ext_port.r_en):
 #                m.d.sync += self.in_buffer.fifo.we.eq(1)
