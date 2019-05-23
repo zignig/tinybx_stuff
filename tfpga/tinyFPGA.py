@@ -96,7 +96,8 @@ class BX:
                 m.submodules += mode
         return m
 
-b = BX()
-b.prepare()
-b.info()
-b.build()
+if __name__ == "__main__":
+    b = BX()
+    b.prepare()
+    b.info()
+    b.build()
