@@ -105,7 +105,7 @@ class Boneless(Elaboratable):
                 with m.If(self.ext_port.w_en):
                     m.d.sync += self.pins.eq(self.ext_port.w_data)
 
-            with m.If(sefl.ext_port.addrr == 0):
+            with m.If(self.ext_port.addrr == 0):
                 with m.If(self.ex_port.r_en):
                     m.d.sync += self.uart.tx.eq(1)
         #m.submodules.loopback = self.loopback
