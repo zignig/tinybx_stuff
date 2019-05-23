@@ -8,6 +8,8 @@ int in3 = 7;
 int in4 = 6;
 int sp = 150;
 
+int inByte = 0 ;
+
 void setup()
 {
   // Declare motor control pins to be in output
@@ -17,13 +19,11 @@ void setup()
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
-  // A 2s delay before starting main loop
-  // The LED at pin 13 will turn on for ~2s to indicate delay
-  digitalWrite(13, HIGH);
-  delay(1900);
-  digitalWrite(13, LOW);
-  delay(100);
 
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
 }
 
 /*  Move forward function
@@ -79,17 +79,45 @@ void stopMotors() {
 void loop()
 {
   // Move forward for 2s @ speed 200
-  moveBot(true, sp, 1000);
+  //moveBot(true, sp, 1000);
 
   //stopMotors();
   // Rotate bot for 1s clockwise @ speed 150
-  rotateBot(true, sp, 1000);
+  //rotateBot(true, sp, 1000);
   // Move backward for 2s @ speed 200
-  moveBot(false, sp, 1000);
+  //moveBot(false, sp, 1000);
   // Rotate bot for 1s anti-clockwise @ speed 150
-  rotateBot(false, sp, 1000);
+  //rotateBot(false, sp, 1000);
   // Stop motors for 1s @ speed 200
-  moveBot(false, sp, 1000);
-  stopMotors();
-  delay(1000);
+  //moveBot(false, sp, 1000);
+  //stopMotors();
+  if (Serial.available() > 0) {
+    // get incoming byte:
+    inByte = Serial.read();
+    switch (inByte){
+      case '+':
+        sp = sp + 10;
+        break;
+      case '-':
+        sp = sp - 10;
+        break;
+      case 'F':
+        moveBot(true,sp,1000);
+        stopMotors();
+        break;
+      case 'B':
+        moveBot(false,sp,1000);
+        stopMotors();
+        break;
+      case '<':
+        rotateBot(false,sp,1000);
+        stopMotors();
+        break;
+      case '>':
+        rotateBot(true,sp,1000);
+        stopMotors();
+        break;
+
+    }
+  }
 }
