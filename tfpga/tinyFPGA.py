@@ -1,5 +1,4 @@
 " Basic framwork for a tinyFGPBx SOC"
-from . import pins
 from .pins import Pin
 from nmigen import *
 from nmigen.back import verilog
