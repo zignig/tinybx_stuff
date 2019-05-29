@@ -378,7 +378,7 @@ if __name__ == "__main__":
             traces=[tx,rx,tb.RX.rx_error,tb.RX.rx_data,tb.RX.rx_ready]) as sim:
             sim.add_clock(1e-6)
             sim.add_sync_process(_test(tx,rx,tb))
-            sim.run_until(100e-6, run_passive=True)
+            sim.run_until(10000)#, run_passive=True)
 
     if args.type == "uart":
         tb = UART(tx, rx, clk_freq=4800, baud_rate=1200)
