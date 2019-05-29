@@ -16,7 +16,7 @@ def _divisor(freq_in, freq_out, max_ppm=None):
 class RX(Elaboratable):
     def __init__(self, rx, clk_freq, baud_rate):
         self.rx = rx
-        self.rx_data = Signal(8) 
+        self.rx_data = Signal(8)
         self.rx_ready = Signal()
         self.rx_ack = Signal()
         self.rx_error = Signal()
@@ -168,6 +168,7 @@ class _TestPads(Module):
 
 
 def _test_rx(rx, dut):
+    print("test RX")
     def T():
         yield
         yield
@@ -244,6 +245,7 @@ def _test_rx(rx, dut):
 
 
 def _test_tx(tx, dut):
+    print("test TX")
     def Th():
         yield
         yield
@@ -260,7 +262,7 @@ def _test_tx(tx, dut):
 
     def S(octet):
         assert (yield tx) == 1
-        assert (yield dut.tx_ack) == 1
+        assert (yield dut.x_ack) == 1
         yield dut.tx_data.eq(octet)
         yield dut.tx_ready.eq(1)
         while (yield tx) == 1:
@@ -292,8 +294,8 @@ def _test_tx(tx, dut):
 
 
 def _test(tx, rx, dut):
-    yield from _test_rx(rx, dut)
-    yield from _test_tx(tx, dut)
+    yield from _test_rx(rx, dut.RX)
+    yield from _test_tx(tx, dut.TX)
 
 
 class _LoopbackTest(Elaboratable):
@@ -305,7 +307,7 @@ class _LoopbackTest(Elaboratable):
 
     def elaborate(self,platform):
         m = Module()
-        
+
         m.submodules.uart = self.uart
 
         empty = Signal(reset=1)
@@ -324,7 +326,7 @@ class _LoopbackTest(Elaboratable):
         with m.If(rx_strobe):
             m.d.sync += data.eq(self.uart.RX.rx_data), empty.eq(0)
         with m.If(tx_strobe):
-            m.d.sync += empty.eq(1)    
+            m.d.sync += empty.eq(1)
 
         if self.debug:
             m.d.comb += [
@@ -370,13 +372,21 @@ if __name__ == "__main__":
 
     if args.type == "sim":
         tb = UART(tx, rx, clk_freq=4800, baud_rate=1200)
+        with pysim.Simulator(tb,
+            vcd_file=open("ctrl.vcd", "w"),
+            gtkw_file=open("ctrl.gtkw", "w"),
+            traces=[tx,rx,tb.RX.rx_error,tb.RX.rx_data,tb.RX.rx_ready]) as sim:
+            sim.add_clock(1e-6)
+            sim.add_sync_process(_test(tx,rx,tb))
+            sim.run_until(100e-6, run_passive=True)
 
     if args.type == "uart":
         tb = UART(tx, rx, clk_freq=4800, baud_rate=1200)
         ios = (tx, rx,tb.TX.tx_data,tb.RX.rx_data)
+        cli.main_runner(parser, args, tb, name=args.type, ports=ios)
 
     if args.type == "loopback":
         tb = _LoopbackTest(tx,rx)
         ios = (tx,rx)
+        cli.main_runner(parser, args, tb, name=args.type, ports=ios)
 
-    cli.main_runner(parser, args, tb, name=args.type, ports=ios)
