@@ -27,44 +27,94 @@ class RX(Elaboratable):
 
         rx_counter = Signal(max=self.divisor)
         rx_strobe = Signal()
+
         m.d.comb += rx_strobe.eq(rx_counter == 0)
-
         with m.If(rx_counter == 0):
-            m.d.sync += rx_counter.eq(self.divisor - 1)
-        with m.Else():
-            m.d.sync += rx_counter.eq(rx_counter - 1)
+            m.d.sync += rx_counter.eq(self.divisor -1)
+        with m.Else():        
+            m.d.sync += rx_counter.eq(rx_counter -1)
 
+#        m.d.sync += \
+#            If(rx_counter == 0,
+#                rx_counter.eq(divisor - 1)
+#            ).Else(
+#                rx_counter.eq(rx_counter - 1)
+#            )
+#
         rx_bitno = Signal(3)
-
         with m.FSM(reset="IDLE") as fsm:
             with m.State("IDLE"):
-                with m.If(~self.rx):
+                with m.If(~rx):
                     m.d.sync += rx_counter.eq(self.divisor // 2)
                     m.next = "START"
+
+#        self.rx_fsm.act("IDLE",
+#            If(~serial.rx,
+#                NextValue(rx_counter, divisor // 2),
+#                NextState("START")
+#            )
+#        )
             with m.State("START"):
                 with m.If(rx_strobe):
                     m.next = "DATA"
+
+#        self.rx_fsm.act("START",
+#            If(rx_strobe,
+#                NextState("DATA")
+#            )
+#        )
             with m.State("DATA"):
                 with m.If(rx_strobe):
-                    m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8], self.rx))
+                    m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8],rx))
                     m.d.sync += rx_bitno.eq(rx_bitno + 1)
-                    with m.If(rx_bitno == 7):
-                        m.next = "STOP"
+                with m.If(rx_bitno == 7):
+                    m.next = "STOP"
+
+#        self.rx_fsm.act("DATA",
+#            If(rx_strobe,
+#                NextValue(self.rx_data, Cat(self.rx_data[1:8], serial.rx)),
+#                NextValue(rx_bitno, rx_bitno + 1),
+#                If(rx_bitno == 7,
+#                    NextState("STOP")
+#                )
+#            )
+#        )
             with m.State("STOP"):
                 with m.If(rx_strobe):
-                    with m.If(~self.rx):
+                    with m.If(~rx):
                         m.next = "ERROR"
                     with m.Else():
                         m.next = "FULL"
+
+#        self.rx_fsm.act("STOP",
+#            If(rx_strobe,
+#                If(~serial.rx,
+#                    NextState("ERROR")
+#                ).Else(
+#                    NextState("FULL")
+#                )
+#            )
+#        )
             with m.State("FULL"):
                 m.d.sync += self.rx_ready.eq(1)
                 with m.If(self.rx_ack):
                     m.next = "IDLE"
-                with m.If(~self.rx):
+                with m.Elif(~rx):
                     m.next = "ERROR"
+                    
+#        self.rx_fsm.act("FULL",
+#            self.rx_ready.eq(1),
+#            If(self.rx_ack,
+#                NextState("IDLE")
+#            ).Elif(~serial.rx,
+#                NextState("ERROR")
+#            )
+
             with m.State("ERROR"):
                 m.d.sync += self.rx_error.eq(1)
 
+#        self.rx_fsm.act("ERROR",
+#           self.rx_error.eq(1))
         return m
 
 
@@ -304,6 +354,8 @@ class _LoopbackTest(Elaboratable):
         #debug = plat.request("debug")
         self.debug = debug
         self.uart = UART(tx, rx, clk_freq=16000000, baud_rate=9600)
+        self.RX = self.uart.RX
+        self.TX = self.uart.TX
 
     def elaborate(self,platform):
         m = Module()
@@ -375,7 +427,7 @@ if __name__ == "__main__":
         with pysim.Simulator(tb,
             vcd_file=open("ctrl.vcd", "w"),
             gtkw_file=open("ctrl.gtkw", "w"),
-            traces=[tx,rx,tb.RX.rx_error,tb.RX.rx_data,tb.RX.rx_ready]) as sim:
+            traces=[tx,rx]) as sim:
             sim.add_clock(1e-6)
             sim.add_sync_process(_test(tx,rx,tb))
             sim.run_until(10000)#, run_passive=True)
