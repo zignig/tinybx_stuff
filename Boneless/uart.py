@@ -21,6 +21,7 @@ class RX(Elaboratable):
         self.rx_ack = Signal()
         self.rx_error = Signal()
         self.divisor = _divisor(freq_in=clk_freq, freq_out=baud_rate, max_ppm=50000)
+        print(self.divisor)
 
     def elaborate(self, platform):
         m = Module()
@@ -31,7 +32,7 @@ class RX(Elaboratable):
         m.d.comb += rx_strobe.eq(rx_counter == 0)
         with m.If(rx_counter == 0):
             m.d.sync += rx_counter.eq(self.divisor -1)
-        with m.Else():        
+        with m.Else():
             m.d.sync += rx_counter.eq(rx_counter -1)
 
 #        m.d.sync += \
@@ -42,6 +43,7 @@ class RX(Elaboratable):
 #            )
 #
         rx_bitno = Signal(3)
+
         with m.FSM(reset="IDLE") as fsm:
             with m.State("IDLE"):
                 with m.If(~rx):
@@ -66,7 +68,7 @@ class RX(Elaboratable):
             with m.State("DATA"):
                 with m.If(rx_strobe):
                     m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8],rx))
-                    m.d.sync += rx_bitno.eq(rx_bitno + 1)
+                    m.d.sync +=  rx_bitno.eq(rx_bitno + 1)
                 with m.If(rx_bitno == 7):
                     m.next = "STOP"
 
@@ -81,7 +83,7 @@ class RX(Elaboratable):
 #        )
             with m.State("STOP"):
                 with m.If(rx_strobe):
-                    with m.If(~rx):
+                    with m.If(rx):
                         m.next = "ERROR"
                     with m.Else():
                         m.next = "FULL"
@@ -101,7 +103,7 @@ class RX(Elaboratable):
                     m.next = "IDLE"
                 with m.Elif(~rx):
                     m.next = "ERROR"
-                    
+
 #        self.rx_fsm.act("FULL",
 #            self.rx_ready.eq(1),
 #            If(self.rx_ack,
@@ -209,7 +211,7 @@ class UART(Elaboratable):
 
 class _TestPads(Module):
     def __init__(self):
-        self.rx = Signal(reset=1)
+        self.rx = Signal()
         self.tx = Signal()
 
     def elaborate(self, platform):
@@ -261,10 +263,10 @@ def _test_rx(rx, dut):
         yield from T()
         assert (yield dut.rx_error) == 1
         yield rx.eq(1)
-        yield dut.cd_sys.rst.eq(1)
+        yield dut.domain.rst.eq(1)
         yield
         yield
-        yield dut.cd_sys.rst.eq(0)
+        yield dut.domain.rst.eq(0)
         yield
         yield
         assert (yield dut.rx_error) == 0
@@ -420,17 +422,19 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     tx = Signal()
-    rx = Signal()
+    rx = Signal(reset=1)
 
     if args.type == "sim":
-        tb = UART(tx, rx, clk_freq=4800, baud_rate=1200)
+        freq = 4800
+        tb = UART(tx, rx, clk_freq=freq, baud_rate=1200)
         with pysim.Simulator(tb,
             vcd_file=open("ctrl.vcd", "w"),
             gtkw_file=open("ctrl.gtkw", "w"),
             traces=[tx,rx]) as sim:
             sim.add_clock(1e-6)
             sim.add_sync_process(_test(tx,rx,tb))
-            sim.run_until(10000)#, run_passive=True)
+            #sim.run_until(100e-6, run_passive=True)
+            sim.run()
 
     if args.type == "uart":
         tb = UART(tx, rx, clk_freq=4800, baud_rate=1200)
