@@ -46,6 +46,8 @@ class RX(Elaboratable):
 
         with m.FSM(reset="IDLE") as fsm:
             with m.State("IDLE"):
+                m.d.sync += self.rx_ready.eq(0)
+                m.d.sync += rx_bitno.eq(0)
                 with m.If(~rx):
                     m.d.sync += rx_counter.eq(self.divisor // 2)
                     m.next = "START"
@@ -101,7 +103,7 @@ class RX(Elaboratable):
                 m.d.sync += self.rx_ready.eq(1)
                 with m.If(self.rx_ack):
                     m.next = "IDLE"
-                with m.Elif(~rx):
+                with m.Elif(rx):
                     m.next = "ERROR"
 
 #        self.rx_fsm.act("FULL",
@@ -232,27 +234,32 @@ def _test_rx(rx, dut):
         yield from T()
 
     def S():
+        print("START BIT")
         yield from B(0)
         assert (yield dut.rx_error) == 0
         assert (yield dut.rx_ready) == 0
 
     def D(bit):
+        print("DATA BIT ",bit)
         yield from B(bit)
         assert (yield dut.rx_error) == 0
         assert (yield dut.rx_ready) == 0
 
     def E():
+        print("END BIT")
         yield from B(1)
         assert (yield dut.rx_error) == 0
 
     def O(bits):
+        print("OUT")
         yield from S()
         for bit in bits:
             yield from D(bit)
         yield from E()
 
     def A(octet):
-        yield from T()
+        print("ACKNOWLEDGE")
+        #yield from T()
         assert (yield dut.rx_data) == octet
         yield dut.rx_ack.eq(1)
         while (yield dut.rx_ready) == 1:
@@ -273,7 +280,7 @@ def _test_rx(rx, dut):
 
     # bit patterns
     yield from O([1, 0, 1, 0, 1, 0, 1, 0])
-    yield from A(0x55)
+    yield from A(0xAA)
     yield from O([1, 1, 0, 0, 0, 0, 1, 1])
     yield from A(0xC3)
     yield from O([1, 0, 0, 0, 0, 0, 0, 1])
@@ -431,7 +438,7 @@ if __name__ == "__main__":
             vcd_file=open("ctrl.vcd", "w"),
             gtkw_file=open("ctrl.gtkw", "w"),
             traces=[tx,rx]) as sim:
-            sim.add_clock(1e-6)
+            sim.add_clock(freq)
             sim.add_sync_process(_test(tx,rx,tb))
             #sim.run_until(100e-6, run_passive=True)
             sim.run()
