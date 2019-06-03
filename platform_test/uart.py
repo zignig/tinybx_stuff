@@ -21,7 +21,6 @@ class RX(Elaboratable):
         self.rx_ack = Signal()
         self.rx_error = Signal()
         self.divisor = _divisor(freq_in=clk_freq, freq_out=baud_rate, max_ppm=50000)
-        print(self.divisor)
 
     def elaborate(self, platform):
         m = Module()
@@ -71,7 +70,7 @@ class RX(Elaboratable):
 #        )
             with m.State("DATA"):
                 with m.If(rx_strobe):
-                    m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8],rx))
+                    m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8],self.rx))
                     m.d.sync +=  rx_bitno.eq(rx_bitno + 1)
                     with m.If(rx_bitno == 7):
                         m.next = "STOP"
@@ -105,7 +104,7 @@ class RX(Elaboratable):
                 m.d.sync += self.rx_ready.eq(1)
                 with m.If(self.rx_ack):
                     m.next = "IDLE"
-                with m.Elif(~rx):
+                with m.Elif(~self.rx):
                     m.next = "ERROR"
 
 #        self.rx_fsm.act("FULL",
@@ -279,6 +278,7 @@ def _test_rx(rx, dut):
         yield rx.eq(1)
         yield
         # yield dut.rst.eq(1)
+        yield ResetSignal().eq(1)
         yield
         #yield dut.rx_error.eq(0)
         yield
@@ -300,7 +300,7 @@ def _test_rx(rx, dut):
     yield from A(0xFF)
     print("end bit patterns\n\n")
 
-    return
+    #return
     # framing error
     yield from S()
     for bit in [1, 1, 1, 1, 1, 1, 1, 1]:
@@ -368,7 +368,7 @@ def _test(tx, rx, dut):
     yield from _test_tx(tx, dut.TX)
 
 
-class _LoopbackTest(Elaboratable):
+class Loopback(Elaboratable):
     def __init__(self, tx, rx,debug=False):
         #leds = Cat([plat.request("user_led") for _ in range(8)])
         #debug = plat.request("debug")
@@ -460,7 +460,7 @@ if __name__ == "__main__":
         cli.main_runner(parser, args, tb, name=args.type, ports=ios)
 
     if args.type == "loopback":
-        tb = _LoopbackTest(tx,rx)
+        tb = Loopback(tx,rx)
         ios = (tx,rx)
         cli.main_runner(parser, args, tb, name=args.type, ports=ios)
 

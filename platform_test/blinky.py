@@ -1,12 +1,12 @@
 from nmigen import *
-from nmigen.vendor.tinyfpga_b import *
+from nmigen.vendor.tinyfpga_bx import *
 
 
 class Blinky(Elaboratable):
     def elaborate(self, platform):
         clk16   = platform.request("clk16", 0)
         user_led = platform.request("user_led", 0)
-        counter  = Signal(20)
+        counter  = Signal(22)
 
         m = Module()
         m.domains.sync = ClockDomain()
@@ -17,5 +17,5 @@ class Blinky(Elaboratable):
 
 
 if __name__ == "__main__":
-    platform = TinyFPGABPlatform()
+    platform = TinyFPGABXPlatform()
     platform.build(Blinky(), do_program=True)
