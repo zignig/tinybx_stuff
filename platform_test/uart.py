@@ -373,7 +373,7 @@ class Loopback(Elaboratable):
         #leds = Cat([plat.request("user_led") for _ in range(8)])
         #debug = plat.request("debug")
         self.debug = debug
-        self.uart = UART(tx, rx, clk_freq=16000000, baud_rate=9600)
+        self.uart = UART(tx, rx, clk_freq=16000000, baud_rate=57600)
         self.RX = self.uart.RX
         self.TX = self.uart.TX
 

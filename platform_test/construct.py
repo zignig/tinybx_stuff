@@ -14,8 +14,8 @@ class Loop(Elaboratable):
         m = Module()
         m.domains.sync = ClockDomain()
         m.d.comb += ClockSignal().eq(clk16.i)
-        #m.d.sync += counter.eq(counter + 1)
-        #m.d.comb += user_led.o.eq(counter[-1])
+        m.d.sync += counter.eq(counter + 1)
+        m.d.comb += user_led.o.eq(counter[-1])
 
         serial = platform.request("serial",0)
         l = Loopback(serial.tx,serial.rx)
