@@ -1,10 +1,12 @@
 from nmigen import *
-from nmigen.vendor.board.tinyfpga_bx import *
+from nmigen_boards.tinyfpga_bx import *
 from nmigen.build import Resource,Subsignal,Pins
 
+from boneless.gateware.core_fsm import BonelessFSMTestbench 
 
 from uart import Loopback 
 from processor import Boneless
+
 
 class Loop(Elaboratable):
     def elaborate(self, platform):
@@ -37,22 +39,20 @@ class CPU (Elaboratable):
         user_led = platform.request("user_led", 0)
 
         m = Module()
-        m.domains.sync = ClockDomain()
+        m.domains.sync  = ClockDomain()
         m.d.comb += ClockSignal().eq(clk16.i)
 
         #counter  = Signal(23)
         #m.d.sync += counter.eq(counter + 1)
         #m.d.comb += user_led.o.eq(counter[-1])
 
-        b = Boneless()
+        b = BonelessFSMTestbench() 
 
         m.submodules.boneless = b
         return m
     
 class Extend(TinyFPGABXPlatform):
-    def extend(self):
-        print("EXTEND")
-        self.add_resources([
+        resources = TinyFPGABXPlatform.resources + [
         # FTDI link back to pc
             Resource("serial",0,
                 Subsignal("tx", Pins("19",conn=("gpio",0),dir="o")),
@@ -63,7 +63,7 @@ class Extend(TinyFPGABXPlatform):
                 Subsignal("tx", Pins("14",conn=("gpio",0), dir="o")),
                 Subsignal("rx", Pins("15",conn=("gpio",0), dir="i")),
             ),
-        ])
+        ]
 
 if __name__ == "__main__":
     platform = Extend()

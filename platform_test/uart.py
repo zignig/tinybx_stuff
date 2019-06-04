@@ -300,7 +300,7 @@ def _test_rx(rx, dut):
     yield from A(0xFF)
     print("end bit patterns\n\n")
 
-    #return
+    return
     # framing error
     yield from S()
     for bit in [1, 1, 1, 1, 1, 1, 1, 1]:
