@@ -1,5 +1,5 @@
 from nmigen import *
-from nmigen.vendor.tinyfpga_bx import *
+from nmigen.vendor.board.tinyfpga_bx import *
 
 
 class Blinky(Elaboratable):
