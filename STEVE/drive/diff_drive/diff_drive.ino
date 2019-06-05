@@ -6,8 +6,8 @@ int in2 = 8;
 int enB = 5;
 int in3 = 7;
 int in4 = 6;
-int sp = 150;
-
+int sp = 100;
+int len = 500;
 int inByte = 0 ;
 
 void setup()
@@ -21,9 +21,10 @@ void setup()
   pinMode(in4, OUTPUT);
 
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
+  //while (!Serial) {
+  // ; // wait for serial port to connect. Needed for native USB port only
+  //}
+  Serial.write("STEVE-0.1");
 }
 
 /*  Move forward function
@@ -95,26 +96,32 @@ void loop()
     // get incoming byte:
     inByte = Serial.read();
     switch (inByte){
-      case '+':
+      case ']':
         sp = sp + 10;
         break;
-      case '-':
+      case '[':
         sp = sp - 10;
         break;
-      case 'F':
-        moveBot(true,sp,1000);
+      case '}':
+        len = len + 50;
+        break;
+      case '{':
+        len = len - 50;
+        break;
+      case 'w':
+        moveBot(true,sp,len);
         stopMotors();
         break;
-      case 'B':
-        moveBot(false,sp,1000);
+      case 's':
+        moveBot(false,sp,len);
         stopMotors();
         break;
-      case '<':
-        rotateBot(false,sp,1000);
+      case 'a':
+        rotateBot(false,sp,len);
         stopMotors();
         break;
-      case '>':
-        rotateBot(true,sp,1000);
+      case 'd':
+        rotateBot(true,sp,len);
         stopMotors();
         break;
 
