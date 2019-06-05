@@ -2,7 +2,7 @@ from nmigen import *
 
 
 def _divisor(freq_in, freq_out, max_ppm=None):
-    divisor = freq_in // freq_out
+    divisor = int(freq_in // freq_out)
     if divisor <= 0:
         raise ArgumentError("output frequency is too high")
 
@@ -369,11 +369,11 @@ def _test(tx, rx, dut):
 
 
 class Loopback(Elaboratable):
-    def __init__(self, tx, rx,debug=False):
+    def __init__(self, tx, rx,clk_freq,baud_rate=9600,debug=False):
         #leds = Cat([plat.request("user_led") for _ in range(8)])
         #debug = plat.request("debug")
         self.debug = debug
-        self.uart = UART(tx, rx, clk_freq=16000000, baud_rate=57600)
+        self.uart = UART(tx, rx, clk_freq=clk_freq, baud_rate=baud_rate)
         self.RX = self.uart.RX
         self.TX = self.uart.TX
 
