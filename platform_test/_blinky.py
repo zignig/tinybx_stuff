@@ -1,6 +1,8 @@
-from nmigen import *
-from nmigen.cli import main, pysim
+import itertools
 
+from nmigen import *
+from nmigen.build import ResourceError
+from nmigen.tools import bits_for
 
 # PWM up and down ramping
 class Breathe(Elaboratable):
@@ -52,7 +54,48 @@ class Breathe(Elaboratable):
                         m.d.sync += self.updown.eq(1)
                         m.d.sync += [self.top.eq(0), self.bottom.eq(1)]
 
-if __name__ == "__main__":
-    b = Breathe(width=5)
-    pins = (b.counter, b.value, b.enable, b.o, b.updown, b.top, b.bottom)
-    main(b, pins, name="top")
+        with m.Else():
+            m.d.comb += self.o.eq(0)
+        return m
+
+
+class Blinky(Elaboratable):
+    def __init__(self, clk_name):
+        self.clk_name = clk_name
+
+    def elaborate(self, platform):
+        m = Module()
+
+        clk = platform.request(self.clk_name)
+        clk_freq = platform.get_clock_constraint(clk)
+        m.domains.sync = ClockDomain()
+        m.d.comb += ClockSignal().eq(clk.i)
+
+        leds = []
+        for n in itertools.count():
+            try:
+                leds.append(platform.request("user_led", n))
+            except ResourceError:
+                break
+
+        del leds[0]
+        l = len(leds)
+        for i,j  in enumerate(leds):
+            print(i/l,j)
+            b = Breathe(phase=(i/l),stretch=50)
+            m.submodules += b
+            m.d.comb += leds[i].o.eq(b.o)
+
+        #leds = Cat(led.o for led in leds)
+
+        #ctr = Signal(max=int(clk_freq//2), reset=int(clk_freq//2) - 1)
+        #with m.If(ctr == 0):
+        #    m.d.sync += ctr.eq(ctr.reset)
+        #    m.d.sync += leds.eq(~leds)
+        #with m.Else():
+        #    m.d.sync += ctr.eq(ctr - 1)
+        return m
+
+
+def build_and_program(platform_cls, clk_name, **kwargs):
+    platform_cls().build(Blinky(clk_name), do_program=True, **kwargs)

@@ -8,6 +8,8 @@ from uart import Loopback
 from processor import Boneless
 
 
+from cores.breathe import Breathe
+
 class Loop(Elaboratable):
     def __init__(self,baud_rate=9600):
         self.baud_rate = baud_rate
@@ -39,7 +41,8 @@ class Loop(Elaboratable):
 class CPU (Elaboratable):
     def elaborate(self, platform):
         clk16    = platform.request("clk16", 0)
-        user_led = platform.request("user_led", 0)
+        user_led = platform.request("user_led", 1)
+        user_led2 = platform.request("user_led", 3)
 
         m = Module()
         m.domains.sync  = ClockDomain()
@@ -52,6 +55,13 @@ class CPU (Elaboratable):
         b = BonelessFSMTestbench() 
 
         m.submodules.boneless = b
+
+        br = Breathe(width=17)
+        m.submodules.br = br
+        m.d.comb += user_led.eq(br.o)
+        b2= Breathe(width=17)
+        m.submodules.b2 = b2
+        m.d.comb += user_led2.eq(br.o)
         return m
     
 class Extend(TinyFPGABXPlatform):
@@ -69,6 +79,7 @@ class Extend(TinyFPGABXPlatform):
         ]
 
 if __name__ == "__main__":
-    platform = Extend()
+    from plat import BB
+    platform = BB()
     #platform.build(Loop(baud_rate=57600), do_program=True)
-    platform.build(CPU(),quiet=False)
+    platform.build(CPU(),do_program=True)

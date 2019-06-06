@@ -1,5 +1,5 @@
 from nmigen import *
-from nmigen.vendor.board.tinyfpga_bx import *
+from nmigen_boards.tinyfpga_bx import *
 
 
 class Counter(Elaboratable):
