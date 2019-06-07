@@ -6,6 +6,7 @@ from boneless.gateware.core_fsm import BonelessFSMTestbench
 
 from uart import Loopback 
 from processor import Boneless
+from cores.larson import OnOff
 
 
 from cores.breathe import Breathe
@@ -38,7 +39,10 @@ class Loop(Elaboratable):
         return m
 
 
-class CPU (Elaboratable):
+class CPU(Elaboratable):
+    def __init__(self):
+        pass
+
     def elaborate(self, platform):
         clk16    = platform.request("clk16", 0)
         user_led = platform.request("user_led", 1)
@@ -47,21 +51,12 @@ class CPU (Elaboratable):
         m = Module()
         m.domains.sync  = ClockDomain()
         m.d.comb += ClockSignal().eq(clk16.i)
-
-        #counter  = Signal(23)
-        #m.d.sync += counter.eq(counter + 1)
-        #m.d.comb += user_led.o.eq(counter[-1])
-
-        b = BonelessFSMTestbench() 
-
+        
+        b = Boneless() 
         m.submodules.boneless = b
 
-        br = Breathe(width=17)
-        m.submodules.br = br
-        m.d.comb += user_led.eq(br.o)
-        b2= Breathe(width=17)
-        m.submodules.b2 = b2
-        m.d.comb += user_led2.eq(br.o)
+        m.d.sync += user_led.eq(b.pins[0])
+        m.d.sync += user_led2.eq(b.pins[1])
         return m
     
 class Extend(TinyFPGABXPlatform):
@@ -81,5 +76,4 @@ class Extend(TinyFPGABXPlatform):
 if __name__ == "__main__":
     from plat import BB
     platform = BB()
-    #platform.build(Loop(baud_rate=57600), do_program=True)
     platform.build(CPU(),do_program=True)

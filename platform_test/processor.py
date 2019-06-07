@@ -6,7 +6,7 @@ from nmigen.back import pysim
 from nmigen.cli import main
 
 class Boneless(Elaboratable):
-    def __init__(self, has_pins=False, asmfile="asm/echo.asm"):
+    def __init__(self, has_pins=True, asmfile="asm/echo.asm"):
         self.memory = Memory(width=16, depth=32)
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None

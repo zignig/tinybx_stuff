@@ -17,7 +17,7 @@ class OnOff(Elaboratable):
 
 # PWM up and down ramping on enable
 class Fade(Elaboratable):
-    def __init__(self, width=8, stretch=5):
+    def __init__(self, width=8, stretch=3):
         self.width = width
 
         self.counter = Signal(width)
@@ -36,9 +36,14 @@ class Fade(Elaboratable):
         m = Module()
         with m.If(self.enable):
             # PWM
-            with m.If(self.counter < self.value + 1):
+            with m.If(self.value == 2 ** self.width):
                 m.d.comb += self.o.eq(1)
-            with m.If(self.counter +1  > self.value):
+            with m.Elif(self.counter <= self.value ):
+                m.d.comb += self.o.eq(1)
+
+            with m.If(self.value == 0):
+                m.d.comb += self.o.eq(0)
+            with m.Elif(self.counter > self.value ):
                 m.d.comb += self.o.eq(0)
 
             m.d.sync += self.counter.eq(self.counter + 1)
