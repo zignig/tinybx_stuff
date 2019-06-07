@@ -17,14 +17,14 @@ class OnOff(Elaboratable):
 
 # PWM up and down ramping on enable
 class Fade(Elaboratable):
-    def __init__(self, width=5, stretch=10):
+    def __init__(self, width=8, stretch=5):
         self.width = width
 
         self.counter = Signal(width)
         self.value = Signal(width)
 
         self.enable = Signal(reset=1)
-        self.active = Signal(reset=1)
+        self.active = Signal()
 
         # Attach this to your led
         self.o = Signal()
@@ -36,9 +36,9 @@ class Fade(Elaboratable):
         m = Module()
         with m.If(self.enable):
             # PWM
-            with m.If(self.counter < self.value+1):
+            with m.If(self.counter < self.value + 1):
                 m.d.comb += self.o.eq(1)
-            with m.Else():
+            with m.If(self.counter +1  > self.value):
                 m.d.comb += self.o.eq(0)
 
             m.d.sync += self.counter.eq(self.counter + 1)
@@ -48,7 +48,7 @@ class Fade(Elaboratable):
             with m.If(self.stretcher == self.stretch):
                 m.d.sync += self.stretcher.eq(0)
                 with m.If(self.active == 1):
-                    with m.If(self.value < 2 ** self.width-1):
+                    with m.If(self.value < 2 ** self.width - 1):
                         m.d.sync += self.value.eq(self.value + 1)
                 with m.If(self.active == 0):
                     with m.If(self.value > 0):
@@ -90,13 +90,14 @@ class Larson(Elaboratable):
         return m
 
 class FadeTest(Elaboratable):
-    def __init__(self):
+    def __init__(self,stretch=500):
         self.o = Signal()
+        self.stretch = stretch
 
     def elaborate(self,platform):
         m = Module() 
         fader = Fade()
-        onoff = OnOff()
+        onoff = OnOff(stretch=self.stretch)
         m.d.sync += fader.active.eq(onoff.o)
         m.d.comb += self.o.eq(fader.o)
 
@@ -109,12 +110,12 @@ if __name__ == "__main__":
     #b = Larson(width=4, stretch=50)
     #pins = (b.track, b.stretcher, b.stretch, b.updown)
     #main(b, pins, name="top")
-    #f = Fade(width=5,stretch=100)
+    #f = Fade()
     #pins = (f.o,f.active,f.counter,f.value,f.enable)
     #main(f,pins,name="top")
     #c = OnOff(stretch=500)
     #pins = (c.o,c.stretch,c.stretcher)
     #main(c,pins,name="top")
-    f = FadeTest()
+    f = FadeTest(stretch=4000)
     pins = (f.o)
     main(f,pins,name="fader")
