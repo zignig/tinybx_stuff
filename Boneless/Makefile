@@ -7,8 +7,8 @@ BASENAME = boneless
 TARGETNAME = $(BASENAME)_tbx
 PROJTOP = $(TARGETNAME)
 
-## SOURCES = boneless_core.v usb/*.v pll.v
-SOURCES = loopback.v usb/*.v pll.v
+# SOURCES = boneless_core.v usb/*.v pll.v
+SOURCES = boneless_core.v usb/*.v pll.v
 
 SRC = $(PROJTOP).v $(SOURCES)
 
@@ -37,7 +37,6 @@ gui: $(PIN_DEF) $(PROJTOP).json
 
 %.v:
 	python3 processor.py generate boneless_core.v
-	python3 loopback.py generate loopback.v
 %.bin: %.asc
 	icepack $< $@
 

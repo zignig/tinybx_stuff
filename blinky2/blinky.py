@@ -34,9 +34,9 @@ class Multi(Elaboratable):
 
     def elaborate(self,platform):
         m = Module()
-        m.domains += ClockDomain(name="sync",reset_less=True)
+        m.domains.sync = ClockDomain(name="sync",reset_less=True)
         for i,j in enumerate(self.names):
-            b = Blinker(j,21+i)
+            b = Blinker(j,31+i)
             m.submodules += b
             self.pins.append(b.pin)
             #m.d.comb += self.pins[i].eq(b.pin)

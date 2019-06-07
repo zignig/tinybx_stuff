@@ -1,0 +1,14 @@
+[dumpfile] "/opt/FPGA/tinybx_stuff/Boneless/ctrl.vcd"
+[dumpfile_size] 36603
+[treeopen] top.
+*-45.502222 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+@800200
+-d.sync
+@22
+top.tx_rst
+top.tx_clk
+@1000200
+-d.sync
+@22
+top.tx.tx
+top.rx_rx

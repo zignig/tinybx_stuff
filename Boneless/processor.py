@@ -72,23 +72,6 @@ class Boneless(Elaboratable):
         self.memory = Memory(width=16, depth=32)
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None
-        # uart interface
-        # usb interface
-        self.uart = u(9600)
-        # fifo signals
-        self.usb_in_valid = Signal()
-        self.usb_in_ready = Signal()
-        self.usb_in_data = Signal(8,name="usb_in_data")
-
-
-        self.usb_out_valid = Signal()
-        self.usb_out_ready = Signal()
-        self.usb_out_data = Signal(8,name="usb_out_data")
-
-        #self.in_buffer = Buffer(self.usb_in_valid,self.usb_in_ready,self.usb_in_data)
-        #self.out_buffer = Buffer(self.usb_out_valid,self.usb_out_ready,self.usb_out_data)
-        self.loopback = Loopback(self.usb_in_valid,self.usb_in_ready,self.usb_in_data,self.usb_out_valid,self.usb_out_ready,self.usb_out_data,self.pins)
-        # Code
         code = Assembler(file_name=asmfile)
         code.assemble()
         self.memory.init = code.code
@@ -96,18 +79,18 @@ class Boneless(Elaboratable):
     def elaborate(self, platform):
         m = Module()
 
-        m.submodules.uart = self.uart
-        if self.pins is not None:
-            # blinky on port address 0
-            with m.If(self.ext_port.addr == 0):
-                with m.If(self.ext_port.r_en):
-                    m.d.sync += self.ext_port.r_data.eq(self.pins)
-                with m.If(self.ext_port.w_en):
-                    m.d.sync += self.pins.eq(self.ext_port.w_data)
-
-            with m.If(self.ext_port.addrr == 0):
-                with m.If(self.ex_port.r_en):
-                    m.d.sync += self.uart.tx.eq(1)
+        #m.submodules.uart = self.uart
+        #if self.pins is not None:
+        #    # blinky on port address 0
+        #    with m.If(self.ext_port.addr == 0):
+        #        with m.If(self.ext_port.r_en):
+        #            m.d.sync += self.ext_port.r_data.eq(self.pins)
+        #        with m.If(self.ext_port.w_en):
+        #            m.d.sync += self.pins.eq(self.ext_port.w_data)
+#
+#            with m.If(self.ext_port.addrr == 0):
+#                with m.If(self.ex_port.r_en):
+#                    m.d.sync += self.uart.tx.eq(1)
         #m.submodules.loopback = self.loopback
 
 #        with m.If(self.ext_port.addr == 1):
@@ -139,7 +122,7 @@ if __name__ == "__main__":
     cli.main_parser(parser)
     args = parser.parse_args()
 
-    tb= Boneless(has_pins=True)
-    ios = (tb.pins,tb.usb_in_data,tb.usb_out_data,tb.usb_in_valid,tb.usb_in_ready,tb.usb_out_valid,tb.usb_out_ready)
+    tb= Boneless(has_pins=False)
+    ios = () # (tb.pins,tb.usb_in_data,tb.usb_out_data,tb.usb_in_valid,tb.usb_in_ready,tb.usb_out_valid,tb.usb_out_ready)
 
     cli.main_runner(parser,args,tb,name="boneless_core",ports=ios)

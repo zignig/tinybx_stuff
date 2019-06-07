@@ -53,17 +53,17 @@ module boneless_tbx(
     // pullup
     assign pin_pu = 1'b1;
 
-loopback looper (
-.clk(clk_48mhz),
-.rst(reset),
-.uiv(usb_in_valid),
-.uir(usb_in_ready),
-.uid(usb_in_data),
-.uov(usb_out_valid),
-.uor(usb_out_ready),
-.uod(usb_out_data),
-.leds(led)
-);
+//loopback looper (
+//.clk(clk_48mhz),
+//.rst(reset),
+//.uiv(usb_in_valid),
+//.uir(usb_in_ready),
+//.uid(usb_in_data),
+//.uov(usb_out_valid),
+//.uor(usb_out_ready),
+//.uod(usb_out_data),
+//.leds(led)
+//);
 // Directions for the uart
 //    // uart pipeline in (out of the device, into the host)
 //    input [7:0] uart_in_data,
@@ -78,11 +78,12 @@ loopback looper (
 
     // Boneless CPU
     // -------------------------
-//    boneless_core cpu(
-//        .clk(clk_48mhz),
-//        .rst(reset),
+    boneless_core cpu(
+        .clk(clk_48mhz),
+        .rst(reset),
 //        .r_win(0),
 //        .pins(led),
+    );
 //        // USB interface 
 //        //.usb_in_valid(usb_in_valid),
 //        //.usb_in_ready(usb_in_ready),
