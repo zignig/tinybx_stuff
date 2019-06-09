@@ -2,22 +2,22 @@
 attribute \generator "nMigen"
 attribute \nmigen.hierarchy "top.cpu.core.formal"
 module \formal
-  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:150"
-  wire width 1 input 0 \memory_w_en
-  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:146"
-  wire width 8 input 1 \memory_w_addr
-  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:148"
-  wire width 16 input 2 \memory_w_data
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31"
-  wire width 16 input 3 \ext_addr
+  wire width 16 input 0 \ext_addr
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:32"
-  wire width 1 input 4 \ext_r_en
+  wire width 1 input 1 \ext_r_en
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33"
-  wire width 16 input 5 \ext_r_data
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
-  wire width 16 input 6 \ext_w_data
+  wire width 16 input 2 \ext_r_data
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34"
-  wire width 1 input 7 \ext_w_en
+  wire width 1 input 3 \ext_w_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
+  wire width 16 input 4 \ext_w_data
+  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:150"
+  wire width 1 input 5 \memory_w_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:146"
+  wire width 8 input 6 \memory_w_addr
+  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:148"
+  wire width 16 input 7 \memory_w_data
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/formal.py:20"
   wire width 16 \fi_mem_w_addr
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/formal.py:20"
@@ -320,22 +320,22 @@ end
 attribute \generator "nMigen"
 attribute \nmigen.hierarchy "top.cpu.core.sru"
 module \sru
-  attribute \src "bonel.py:15"
+  attribute \src "bonel.py:13"
   wire width 1 input 0 \clk
+  attribute \src "bonel.py:12"
+  wire width 1 input 1 \rst
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:88"
-  wire width 16 input 1 \s_i
+  wire width 16 input 2 \s_i
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:92"
-  wire width 1 input 2 \c_ld
+  wire width 1 input 3 \c_ld
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:93"
-  wire width 1 input 3 \c_dir
+  wire width 1 input 4 \c_dir
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:89"
-  wire width 1 input 4 \s_c
+  wire width 1 input 5 \s_c
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:90"
-  wire width 16 output 5 \r_o
+  wire width 16 output 6 \r_o
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:90"
   wire width 16 $next\r_o
-  attribute \src "bonel.py:14"
-  wire width 1 input 6 \rst
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:99"
   wire width 16 \s_l
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:99"
@@ -414,59 +414,59 @@ end
 attribute \generator "nMigen"
 attribute \nmigen.hierarchy "top.cpu.core"
 module \core
-  attribute \src "bonel.py:15"
+  attribute \src "bonel.py:13"
   wire width 1 input 0 \clk
+  attribute \src "bonel.py:12"
+  wire width 1 input 1 \rst
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31"
+  wire width 16 output 2 \ext_addr
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31"
+  wire width 16 $next\ext_addr
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:32"
+  wire width 1 output 3 \ext_r_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:32"
+  wire width 1 $next\ext_r_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33"
+  wire width 16 input 4 \ext_r_data
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34"
+  wire width 1 output 5 \ext_w_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34"
+  wire width 1 $next\ext_w_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
+  wire width 16 output 6 \ext_w_data
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
+  wire width 16 $next\ext_w_data
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:85"
-  wire width 1 output 1 \memory_r_en
+  wire width 1 output 7 \memory_r_en
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:85"
   wire width 1 $next\memory_r_en
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:81"
-  wire width 8 output 2 \memory_r_addr
+  wire width 8 output 8 \memory_r_addr
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:81"
   wire width 8 $next\memory_r_addr
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:150"
-  wire width 1 output 3 \memory_w_en
+  wire width 1 output 9 \memory_w_en
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:150"
   wire width 1 $next\memory_w_en
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:146"
-  wire width 8 output 4 \memory_w_addr
+  wire width 8 output 10 \memory_w_addr
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:146"
   wire width 8 $next\memory_w_addr
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:148"
-  wire width 16 output 5 \memory_w_data
+  wire width 16 output 11 \memory_w_data
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:148"
   wire width 16 $next\memory_w_data
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/mem.py:83"
-  wire width 16 input 6 \memory_r_data
-  attribute \src "bonel.py:14"
-  wire width 1 \rst
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31"
-  wire width 16 \formal_ext_addr
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31"
-  wire width 16 $next\formal_ext_addr
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:32"
-  wire width 1 \formal_ext_r_en
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:32"
-  wire width 1 $next\formal_ext_r_en
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33"
-  wire width 16 \formal_ext_r_data
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
-  wire width 16 \formal_ext_w_data
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
-  wire width 16 $next\formal_ext_w_data
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34"
-  wire width 1 \formal_ext_w_en
-  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34"
-  wire width 1 $next\formal_ext_w_en
+  wire width 16 input 12 \memory_r_data
   cell \formal \formal
+    connect \ext_addr \ext_addr
+    connect \ext_r_en \ext_r_en
+    connect \ext_r_data \ext_r_data
+    connect \ext_w_en \ext_w_en
+    connect \ext_w_data \ext_w_data
     connect \memory_w_en \memory_w_en
     connect \memory_w_addr \memory_w_addr
     connect \memory_w_data \memory_w_data
-    connect \ext_addr \formal_ext_addr
-    connect \ext_r_en \formal_ext_r_en
-    connect \ext_r_data \formal_ext_r_data
-    connect \ext_w_data \formal_ext_w_data
-    connect \ext_w_en \formal_ext_w_en
   end
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:51"
   wire width 16 \alu_s_a
@@ -508,12 +508,12 @@ module \core
   wire width 16 \sru_r_o
   cell \sru \sru
     connect \clk \clk
+    connect \rst \rst
     connect \s_i \sru_s_i
     connect \c_ld \sru_c_ld
     connect \c_dir \sru_c_dir
     connect \s_c \sru_s_c
     connect \r_o \sru_r_o
-    connect \rst \rst
   end
   attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:124"
   wire width 1 \halted
@@ -1776,7 +1776,7 @@ module \core
   cell $mux $56
     parameter \WIDTH 16
     connect \A \memory_r_data
-    connect \B \formal_ext_r_data
+    connect \B \ext_r_data
     connect \S \i_ext
     connect \Y $55
   end
@@ -2156,7 +2156,7 @@ module \core
       update \s_addr $next\s_addr
   end
   process $group_60
-    assign $next\formal_ext_addr 16'0000000000000000
+    assign $next\ext_addr 16'0000000000000000
     switch \fsm_state
       case 4'0000
       case 4'0001
@@ -2165,11 +2165,11 @@ module \core
       case 4'0011
       case 4'1011
       case 4'0101
-        assign $next\formal_ext_addr \s_addr
+        assign $next\ext_addr \s_addr
       case 4'1100
       case 4'0100
       case 4'1101
-        assign $next\formal_ext_addr \r_addr
+        assign $next\ext_addr \r_addr
       case 4'0110
       case 4'0111
       case 4'1110
@@ -2178,10 +2178,10 @@ module \core
     end
     sync init
     sync always
-      update \formal_ext_addr $next\formal_ext_addr
+      update \ext_addr $next\ext_addr
   end
   process $group_61
-    assign $next\formal_ext_r_en 1'0
+    assign $next\ext_r_en 1'0
     switch \fsm_state
       case 4'0000
       case 4'0001
@@ -2190,7 +2190,7 @@ module \core
       case 4'0011
       case 4'1011
       case 4'0101
-        assign $next\formal_ext_r_en \i_ext
+        assign $next\ext_r_en \i_ext
       case 4'1100
       case 4'0100
       case 4'1101
@@ -2202,7 +2202,7 @@ module \core
     end
     sync init
     sync always
-      update \formal_ext_r_en $next\formal_ext_r_en
+      update \ext_r_en $next\ext_r_en
   end
   wire width 16 $81
   wire width 9 $82
@@ -2274,7 +2274,7 @@ module \core
       update \r_addr $next\r_addr
   end
   process $group_63
-    assign $next\formal_ext_w_data 16'0000000000000000
+    assign $next\ext_w_data 16'0000000000000000
     switch \fsm_state
       case 4'0000
       case 4'0001
@@ -2286,7 +2286,7 @@ module \core
       case 4'1100
       case 4'0100
       case 4'1101
-        assign $next\formal_ext_w_data \memory_r_data
+        assign $next\ext_w_data \memory_r_data
       case 4'0110
       case 4'0111
       case 4'1110
@@ -2295,10 +2295,10 @@ module \core
     end
     sync init
     sync always
-      update \formal_ext_w_data $next\formal_ext_w_data
+      update \ext_w_data $next\ext_w_data
   end
   process $group_64
-    assign $next\formal_ext_w_en 1'0
+    assign $next\ext_w_en 1'0
     switch \fsm_state
       case 4'0000
       case 4'0001
@@ -2310,7 +2310,7 @@ module \core
       case 4'1100
       case 4'0100
       case 4'1101
-        assign $next\formal_ext_w_en \i_ext
+        assign $next\ext_w_en \i_ext
       case 4'0110
       case 4'0111
       case 4'1110
@@ -2319,17 +2319,21 @@ module \core
     end
     sync init
     sync always
-      update \formal_ext_w_en $next\formal_ext_w_en
+      update \ext_w_en $next\ext_w_en
   end
-  connect \rst 1'0
-  connect \formal_ext_r_data 16'0000000000000000
   connect \r_win 5'00000
 end
 attribute \generator "nMigen"
 attribute \nmigen.hierarchy "top.cpu"
 module \cpu
-  attribute \src "bonel.py:15"
+  attribute \src "bonel.py:13"
   wire width 1 input 0 \clk
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:459"
+  wire width 16 output 1 \pins
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:459"
+  wire width 16 $next\pins
+  attribute \src "bonel.py:12"
+  wire width 1 input 2 \rst
   memory width 16 size 256 \memory
   cell $meminit $1
     parameter \MEMID "\\memory"
@@ -2376,14 +2380,92 @@ module \cpu
     connect \ADDR \mem_rdport_memory_w_addr
     connect \DATA \mem_rdport_memory_w_data
   end
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:31"
+  wire width 16 \core_ext_addr
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:32"
+  wire width 1 \core_ext_r_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33"
+  wire width 16 \core_ext_r_data
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:33"
+  wire width 16 $next\core_ext_r_data
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:34"
+  wire width 1 \core_ext_w_en
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:35"
+  wire width 16 \core_ext_w_data
   cell \core \core
     connect \clk \clk
+    connect \rst \rst
+    connect \ext_addr \core_ext_addr
+    connect \ext_r_en \core_ext_r_en
+    connect \ext_r_data \core_ext_r_data
+    connect \ext_w_en \core_ext_w_en
+    connect \ext_w_data \core_ext_w_data
     connect \memory_r_en \mem_rdport_memory_r_en
     connect \memory_r_addr \mem_rdport_memory_r_addr
     connect \memory_w_en \mem_rdport_memory_w_en
     connect \memory_w_addr \mem_rdport_memory_w_addr
     connect \memory_w_data \mem_rdport_memory_w_data
     connect \memory_r_data \mem_rdport_memory_r_data
+  end
+  wire width 1 $3
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:501"
+  cell $eq $4
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 16
+    parameter \B_SIGNED 0
+    parameter \B_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \core_ext_addr
+    connect \B 1'0
+    connect \Y $3
+  end
+  process $group_0
+    assign $next\core_ext_r_data \core_ext_r_data
+    switch { $3 }
+      case 1'1
+        switch { \core_ext_r_en }
+          case 1'1
+            assign $next\core_ext_r_data \pins
+        end
+    end
+    switch \rst
+      case 1'1
+        assign $next\core_ext_r_data 16'0000000000000000
+    end
+    sync init
+      update \core_ext_r_data 16'0000000000000000
+    sync posedge \clk
+      update \core_ext_r_data $next\core_ext_r_data
+  end
+  wire width 1 $5
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:501"
+  cell $eq $6
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 16
+    parameter \B_SIGNED 0
+    parameter \B_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \core_ext_addr
+    connect \B 1'0
+    connect \Y $5
+  end
+  process $group_1
+    assign $next\pins \pins
+    switch { $5 }
+      case 1'1
+        switch { \core_ext_w_en }
+          case 1'1
+            assign $next\pins \core_ext_w_data
+        end
+    end
+    switch \rst
+      case 1'1
+        assign $next\pins 16'0000000000000000
+    end
+    sync init
+      update \pins 16'0000000000000000
+    sync posedge \clk
+      update \pins $next\pins
   end
 end
 attribute \generator "nMigen"
@@ -2392,12 +2474,20 @@ attribute \nmigen.hierarchy "top"
 module \top
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/rec.py:98"
   wire width 1 inout 0 \clk16_0__io
-  attribute \src "bonel.py:15"
-  wire width 1 \cpu_clk
-  attribute \src "bonel.py:15"
-  wire width 1 $next\cpu_clk
+  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/rec.py:98"
+  wire width 1 inout 1 \user_led_0__io
+  attribute \src "bonel.py:13"
+  wire width 1 \clk
+  attribute \src "bonel.py:13"
+  wire width 1 $next\clk
+  attribute \src "bonel.py:12"
+  wire width 1 \rst
+  attribute \src "/usr/local/lib/python3.6/dist-packages/boneless/gateware/core_fsm.py:459"
+  wire width 16 \cpu_pins
   cell \cpu \cpu
-    connect \clk \cpu_clk
+    connect \clk \clk
+    connect \pins \cpu_pins
+    connect \rst \rst
   end
   attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/rec.py:98"
   wire width 1 \clk16_0__i
@@ -2407,11 +2497,34 @@ module \top
     connect \PACKAGE_PIN \clk16_0__io
     connect \D_IN_0 \clk16_0__i
   end
+  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/rec.py:98"
+  wire width 1 \user_led_0__o
+  attribute \src "/usr/local/lib/python3.6/dist-packages/nmigen/hdl/rec.py:98"
+  wire width 1 $next\user_led_0__o
+  cell \SB_IO $2
+    parameter \IO_STANDARD "SB_LVCMOS33"
+    parameter \PIN_TYPE 24
+    connect \PACKAGE_PIN \user_led_0__io
+    connect \D_OUT_0 \user_led_0__o
+  end
   process $group_0
-    assign $next\cpu_clk 1'0
-    assign $next\cpu_clk \clk16_0__i
+    assign $next\clk 1'0
+    assign $next\clk \clk16_0__i
     sync init
     sync always
-      update \cpu_clk $next\cpu_clk
+      update \clk $next\clk
   end
+  process $group_1
+    assign $next\user_led_0__o \user_led_0__o
+    assign { $next\user_led_0__o } \cpu_pins [0]
+    switch \rst
+      case 1'1
+        assign $next\user_led_0__o 1'0
+    end
+    sync init
+      update \user_led_0__o 1'0
+    sync posedge \clk
+      update \user_led_0__o $next\user_led_0__o
+  end
+  connect \rst 1'0
 end
