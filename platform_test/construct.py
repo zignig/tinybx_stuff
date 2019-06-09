@@ -17,6 +17,7 @@ class Loop(Elaboratable):
     " Loopback uart on serial 0 and serial 1"
     def __init__(self,baud_rate=9600):
         self.baud_rate = baud_rate
+
     def elaborate(self, platform):
         clk16    = platform.request("clk16", 0)
         user_led = platform.request("user_led", 0)
@@ -61,6 +62,12 @@ class CPU(Elaboratable):
         leds = Cat(led.o for led in leds)
         m.d.comb += leds.eq(b.pins)
         
+        
+        clock = platform.lookup('clk16').clock
+        serial = platform.request("serial",0)
+        l = Loopback(serial.tx,serial.rx,clock.frequency,9600)
+        m.submodules.loopback = l
+
         return m
     
 class Extend(TinyFPGABXPlatform):
