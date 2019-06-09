@@ -4030,6 +4030,6 @@ found and reported 0 problems.
 3. Executing JSON backend.
 
 End of script. Logfile hash: 20140ebb25
-CPU: user 3.28s system 0.04s, MEM: 80.45 MB total, 47.09 MB resident
+CPU: user 3.28s system 0.05s, MEM: 80.45 MB total, 47.24 MB resident
 Yosys 0.8+510 (git sha1 36120fcc, clang 6.0.0-1ubuntu2 -fPIC -Os)
 Time spent: 33% 19x opt_clean (1 sec), 12% 18x opt_expr (0 sec), ...

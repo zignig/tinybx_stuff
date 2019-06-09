@@ -69,7 +69,7 @@ Info:   at iteration #1: temp = 0.000000, timing cost = 185, wirelen = 2142
 Info:   at iteration #5: temp = 0.000000, timing cost = 108, wirelen = 1817
 Info:   at iteration #10: temp = 0.000000, timing cost = 100, wirelen = 1714
 Info:   at iteration #12: temp = 0.000000, timing cost = 100, wirelen = 1707 
-Info: SA placement time 0.34s
+Info: SA placement time 0.35s
 
 Info: Max frequency for clock 'clk_$glb_clk': 33.28 MHz (PASS at 12.00 MHz)
 
@@ -109,7 +109,7 @@ Info:       1000 |       62        937 |   62   937 |       778
 Info:       2000 |      344       1655 |  282   718 |       164
 Info:       2273 |      433       1840 |   89   185 |         0
 Info: Routing complete.
-Info: Route time 1.05s
+Info: Route time 1.04s
 Info: Checksum: 0xcb7b5aa8
 
 Info: Critical path report for clock 'clk_$glb_clk' (posedge -> posedge):

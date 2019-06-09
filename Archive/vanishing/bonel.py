@@ -21,5 +21,5 @@ class boneless_core(Elaboratable):
 
 if __name__ == "__main__":
     platform = TinyFPGABXPlatform()
-    platform.build(boneless_core(),build_dir='boneless')
+    platform.build(boneless_core(),do_program=True,build_dir='boneless')
 

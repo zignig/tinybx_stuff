@@ -1798,6 +1798,6 @@ found and reported 0 problems.
 3. Executing JSON backend.
 
 End of script. Logfile hash: a07dbe9ae6
-CPU: user 2.35s system 0.03s, MEM: 57.95 MB total, 26.34 MB resident
+CPU: user 2.32s system 0.05s, MEM: 57.95 MB total, 26.01 MB resident
 Yosys 0.8+510 (git sha1 36120fcc, clang 6.0.0-1ubuntu2 -fPIC -Os)
 Time spent: 18% 22x opt_clean (0 sec), 17% 21x opt_expr (0 sec), ...
