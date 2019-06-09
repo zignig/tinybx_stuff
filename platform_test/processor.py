@@ -5,26 +5,54 @@ from nmigen import *
 from nmigen.back import pysim
 from nmigen.cli import main
 
+from uart import UART
+
+
+class Gizmo:
+    def __init__(self):
+        pass
+
 class Boneless(Elaboratable):
-    def __init__(self, has_pins=True, asmfile="asm/echo.asm"):
-        self.memory = Memory(width=16, depth=32)
+    def __init__(self, has_pins=True, asmfile="asm/base.asm"):
+        self.memory = Memory(width=16, depth=512) # max of  8*1024 on the 8k
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None
         # Code
         code = Assembler(file_name=asmfile)
         code.assemble()
         self.memory.init = code.code
+        self.devices = []
+
+        # Add the uart
+
 
     def elaborate(self, platform):
         m = Module()
 
+        # external memory 
+
         if self.pins is not None:
-        #    # blinky on port address 0
+            # blinky on port address 0
             with m.If(self.ext_port.addr == 0):
                 with m.If(self.ext_port.r_en):
                     m.d.sync += self.ext_port.r_data.eq(self.pins)
+                with m.If(self.ext_port.w_en):
+                    m.d.sync += self.pins.eq(self.ext_port.w_data)
+
+            # uart data on address 1
+        #    with m.If(self.ext_port.addr == 1):
+        #        with m.If(self.ext_port.r_en):
+        #            m.d.sync += self.ext_port.r_data.eq(self.pins)
         #        with m.If(self.ext_port.w_en):
         #            m.d.sync += self.pins.eq(self.ext_port.w_data)
+            # uart read status on address 2 
+#
+#            with m.If(self.ext_port.addr == 2):
+#                with m.If(self.ext_port.r_en):
+#                    m.d.sync += self.ext_port.r_data.eq(self.pins)
+#                with m.If(self.ext_port.w_en):
+#                    m.d.sync += self.pins.eq(self.ext_port.w_data)
+
         m.submodules.mem_rdport = mem_rdport = self.memory.read_port(transparent=False)
         m.submodules.mem_wrport = mem_wrport = self.memory.write_port()
         m.submodules.core = BonelessCoreFSM(

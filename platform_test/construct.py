@@ -1,17 +1,20 @@
+import itertools
 from nmigen import *
 from nmigen_boards.tinyfpga_bx import *
 from nmigen.build import Resource,Subsignal,Pins
+from nmigen.build import ResourceError
+from nmigen.tools import bits_for
 
 from boneless.gateware.core_fsm import BonelessFSMTestbench 
 
 from uart import Loopback 
 from processor import Boneless
+
 from cores.larson import OnOff
-
-
 from cores.breathe import Breathe
 
 class Loop(Elaboratable):
+    " Loopback uart on serial 0 and serial 1"
     def __init__(self,baud_rate=9600):
         self.baud_rate = baud_rate
     def elaborate(self, platform):
@@ -34,19 +37,12 @@ class Loop(Elaboratable):
         l2 = Loopback(serial2.tx,serial2.rx,clock.frequency,9600)
         m.submodules.loop2 = l2 
 
-        b = Boneless()
-        m.submodules.boneless = b
         return m
 
 
 class CPU(Elaboratable):
-    def __init__(self):
-        pass
-
     def elaborate(self, platform):
         clk16    = platform.request("clk16", 0)
-        user_led = platform.request("user_led", 1)
-        user_led2 = platform.request("user_led", 3)
 
         m = Module()
         m.domains.sync  = ClockDomain()
@@ -55,8 +51,16 @@ class CPU(Elaboratable):
         b = Boneless() 
         m.submodules.boneless = b
 
-        m.d.sync += user_led.eq(b.pins[0])
-        m.d.sync += user_led2.eq(b.pins[1])
+        leds = []
+        for n in itertools.count():
+            try:
+                leds.append(platform.request("user_led", n))
+            except ResourceError:
+                break
+
+        leds = Cat(led.o for led in leds)
+        m.d.comb += leds.eq(b.pins)
+        
         return m
     
 class Extend(TinyFPGABXPlatform):
