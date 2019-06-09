@@ -1,0 +1,63 @@
+Info: Importing module top
+Info: Rule checker, verifying imported design
+Info: Checksum: 0x430a0fcd
+
+Info: constrained 'clk16_0__io' to bel 'X0/Y30/io0'
+Info: constraining clock net 'clk16_0__io' to 16.00 MHz
+
+Info: Packing constants..
+Info: Packing IOs..
+Info: clk16_0__io feeds SB_IO $1, removing $nextpnr_iobuf clk16_0__io.
+Info: Packing LUT-FFs..
+Info: Packing non-LUT FFs..
+Info: Packing carries..
+Info: Packing RAMs..
+Info: Placing PLLs..
+Info: Packing special functions..
+Info: Promoting globals..
+Info: Constraining chains...
+Info: Checksum: 0xf9cea8b2
+
+Info: Annotating ports with timing budgets for target frequency 12.00 MHz
+Info: Checksum: 0xf9cea8b2
+
+Info: Device utilisation:
+Info: 	         ICESTORM_LC:     1/ 7680     0%
+Info: 	        ICESTORM_RAM:     0/   32     0%
+Info: 	               SB_IO:     1/  256     0%
+Info: 	               SB_GB:     0/    8     0%
+Info: 	        ICESTORM_PLL:     0/    2     0%
+Info: 	         SB_WARMBOOT:     0/    1     0%
+
+Info: Placed 1 cells based on constraints.
+Info: Creating initial analytic placement for 0 cells, random placement wirelen = 0.
+Info:     at initial placer iter 0, wirelen = 0
+Info:     at initial placer iter 1, wirelen = 0
+Info:     at initial placer iter 2, wirelen = 0
+Info:     at initial placer iter 3, wirelen = 0
+Info: Running main analytical placer.
+Info: HeAP Placer Time: 0.01s
+Info:   of which solving equations: 0.00s
+Info:   of which spreading cells: 0.00s
+Info:   of which strict legalisation: 0.00s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 0, wirelen = 0
+Info:   at iteration #2: temp = 0.000000, timing cost = 0, wirelen = 0 
+Info: SA placement time 0.00s
+Warning: No clocks found in design
+
+Info: Checksum: 0xf55569bb
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 0 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs
+Info:          0 |        0          0 |    0     0 |         0
+Info: Routing complete.
+Info: Route time 0.00s
+Info: Checksum: 0xf55569bb
+Warning: No clocks found in design
+
+2 warnings, 0 errors
