@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.swp
 *.vcd
 *.gtkw
 # C extensions
