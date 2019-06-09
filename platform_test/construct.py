@@ -7,7 +7,7 @@ from nmigen.tools import bits_for
 
 from boneless.gateware.core_fsm import BonelessFSMTestbench 
 
-from uart import Loopback 
+from uart import Loopback, UART
 from processor import Boneless
 
 from cores.larson import OnOff
@@ -20,14 +20,10 @@ class Loop(Elaboratable):
 
     def elaborate(self, platform):
         clk16    = platform.request("clk16", 0)
-        user_led = platform.request("user_led", 0)
-        counter  = Signal(23)
 
         m = Module()
         m.domains.sync = ClockDomain()
         m.d.comb += ClockSignal().eq(clk16.i)
-        m.d.sync += counter.eq(counter + 1)
-        m.d.comb += user_led.o.eq(counter[-1])
         
         clock = platform.lookup('clk16').clock
         serial = platform.request("serial",0)
@@ -49,9 +45,15 @@ class CPU(Elaboratable):
         m.domains.sync  = ClockDomain()
         m.d.comb += ClockSignal().eq(clk16.i)
         
-        b = Boneless() 
+        # Create the serial port 
+        clock = platform.lookup('clk16').clock
+        serial = platform.request("serial",0)
+        debug_uart = UART(serial.tx,serial.rx,clock.frequency,57600)
+
+        b = Boneless(debug_uart) 
         m.submodules.boneless = b
 
+        # Attach the blinky
         leds = []
         for n in itertools.count():
             try:
@@ -60,29 +62,15 @@ class CPU(Elaboratable):
                 break
 
         leds = Cat(led.o for led in leds)
-        m.d.comb += leds.eq(b.pins)
+        #m.d.comb += leds.eq(b.pins)
+        m.d.comb += leds[0].eq(b.pins)
+        m.d.comb += leds[1].eq(debug_uart.TX.tx_ready)
+        m.d.comb += leds[2].eq(debug_uart.RX.rx_ready)
         
         
-        clock = platform.lookup('clk16').clock
-        serial = platform.request("serial",0)
-        l = Loopback(serial.tx,serial.rx,clock.frequency,9600)
-        m.submodules.loopback = l
 
         return m
     
-class Extend(TinyFPGABXPlatform):
-        resources = TinyFPGABXPlatform.resources + [
-        # FTDI link back to pc
-            Resource("serial",0,
-                Subsignal("tx", Pins("19",conn=("gpio",0),dir="o")),
-                Subsignal("rx", Pins("20",conn=("gpio",0),dir="i")),
-            ),
-        # Serial to AVR
-            Resource("serial",1,
-                Subsignal("tx", Pins("14",conn=("gpio",0), dir="o")),
-                Subsignal("rx", Pins("15",conn=("gpio",0), dir="i")),
-            ),
-        ]
 
 if __name__ == "__main__":
     from plat import BB
