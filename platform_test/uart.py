@@ -1,5 +1,12 @@
 from nmigen import *
 
+# Simon Kirkby
+# obeygiantrobot@gmail.com
+# 20190610
+
+# ported to migen from Whitequarks original blog post
+# https://lab.whitequark.org/notes/2016-10-18/implementing-an-uart-in-verilog-and-migen/
+
 
 def _divisor(freq_in, freq_out, max_ppm=None):
     divisor = int(freq_in // freq_out)
@@ -30,60 +37,31 @@ class RX(Elaboratable):
 
         m.d.comb += rx_strobe.eq(rx_counter == 0)
         with m.If(rx_counter == 0):
-            m.d.sync += rx_counter.eq(self.divisor -1)
+            m.d.sync += rx_counter.eq(self.divisor - 1)
         with m.Else():
-            m.d.sync += rx_counter.eq(rx_counter -1)
+            m.d.sync += rx_counter.eq(rx_counter - 1)
 
-#        m.d.sync += \
-#            If(rx_counter == 0,
-#                rx_counter.eq(divisor - 1)
-#            ).Else(
-#                rx_counter.eq(rx_counter - 1)
-#            )
-#
         rx_bitno = Signal(3)
 
         with m.FSM(reset="IDLE") as fsm:
             with m.State("IDLE"):
-                #m.d.sync += self.rx_ready.eq(0)
-#                m.d.sync += rx_bitno.eq(0)
                 with m.If(self.rx_ack):
                     m.d.sync += self.rx_ready.eq(0)
                 with m.If(~self.rx):
                     m.d.sync += rx_counter.eq(self.divisor // 2)
                     m.next = "START"
 
-#        self.rx_fsm.act("IDLE",
-#            If(~serial.rx,
-#                NextValue(rx_counter, divisor // 2),
-#                NextState("START")
-#            )
-#        )
             with m.State("START"):
                 with m.If(rx_strobe):
                     m.next = "DATA"
 
-#        self.rx_fsm.act("START",
-#            If(rx_strobe,
-#                NextState("DATA")
-#            )
-#        )
             with m.State("DATA"):
                 with m.If(rx_strobe):
-                    m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8],self.rx))
-                    m.d.sync +=  rx_bitno.eq(rx_bitno + 1)
+                    m.d.sync += self.rx_data.eq(Cat(self.rx_data[1:8], self.rx))
+                    m.d.sync += rx_bitno.eq(rx_bitno + 1)
                     with m.If(rx_bitno == 7):
                         m.next = "STOP"
 
-#        self.rx_fsm.act("DATA",
-#            If(rx_strobe,
-#                NextValue(self.rx_data, Cat(self.rx_data[1:8], serial.rx)),
-#                NextValue(rx_bitno, rx_bitno + 1),
-#                If(rx_bitno == 7,
-#                    NextState("STOP")
-#                )
-#            )
-#        )
             with m.State("STOP"):
                 with m.If(rx_strobe):
                     with m.If(~self.rx):
@@ -91,15 +69,6 @@ class RX(Elaboratable):
                     with m.Else():
                         m.next = "FULL"
 
-#        self.rx_fsm.act("STOP",
-#            If(rx_strobe,
-#                If(~serial.rx,
-#                    NextState("ERROR")
-#                ).Else(
-#                    NextState("FULL")
-#                )
-#            )
-#        )
             with m.State("FULL"):
                 m.d.sync += self.rx_ready.eq(1)
                 with m.If(self.rx_ack):
@@ -107,19 +76,9 @@ class RX(Elaboratable):
                 with m.Elif(~self.rx):
                     m.next = "ERROR"
 
-#        self.rx_fsm.act("FULL",
-#            self.rx_ready.eq(1),
-#            If(self.rx_ack,
-#                NextState("IDLE")
-#            ).Elif(~serial.rx,
-#                NextState("ERROR")
-#            )
-
             with m.State("ERROR"):
                 m.d.sync += self.rx_error.eq(1)
 
-#        self.rx_fsm.act("ERROR",
-#           self.rx_error.eq(1))
         return m
 
 
@@ -156,24 +115,11 @@ class TX(Elaboratable):
                 with m.Else():
                     m.d.sync += self.tx.eq(1)
 
-            #        self.tx_fsm.act(
-            #            "IDLE",
-            #            self.tx_ack.eq(1),
-            #            If(
-            #                self.tx_ready,
-            #                NextValue(tx_counter, divisor - 1),
-            #                NextValue(tx_latch, self.tx_data),
-            #                NextState("START"),
-            #            ).Else(NextValue(serial.tx, 1)),
-            #        )
             with m.State("START"):
                 with m.If(tx_strobe):
                     m.d.sync += self.tx.eq(0)
                     m.next = "DATA"
 
-            #        self.tx_fsm.act(
-            #            "START", If(self.tx_strobe, NextValue(serial.tx, 0), NextState("DATA"))
-            #        )
             with m.State("DATA"):
                 with m.If(tx_strobe):
                     m.d.sync += self.tx.eq(tx_latch[0])
@@ -182,24 +128,11 @@ class TX(Elaboratable):
                     with m.If(tx_bitno == 7):
                         m.next = "STOP"
 
-            #        self.tx_fsm.act(
-            #            "DATA",
-            #            If(
-            #                self.tx_strobe,
-            #                NextValue(serial.tx, tx_latch[0]),
-            #                NextValue(tx_latch, Cat(tx_latch[1:8], 0)),
-            #                NextValue(tx_bitno, tx_bitno + 1),
-            #                If(self.tx_bitno == 7, NextState("STOP")),
-            #            ),
-            #        )
             with m.State("STOP"):
                 with m.If(tx_strobe):
                     m.d.sync += self.tx.eq(1)
                     m.next = "IDLE"
 
-        #        self.tx_fsm.act(
-        #            "STOP", If(self.tx_strobe, NextValue(serial.tx, 1), NextState("IDLE"))
-        #        )
         return m
 
 
@@ -227,6 +160,7 @@ class _TestPads(Module):
 
 def _test_rx(rx, dut):
     print("test RX")
+
     def T():
         yield
         yield
@@ -244,7 +178,7 @@ def _test_rx(rx, dut):
         assert (yield dut.rx_ready) == 0
 
     def D(bit):
-        print("DATA BIT ",bit)
+        print("DATA BIT ", bit)
         yield from B(bit)
         assert (yield dut.rx_error) == 0
         assert (yield dut.rx_ready) == 0
@@ -280,7 +214,7 @@ def _test_rx(rx, dut):
         # yield dut.rst.eq(1)
         yield ResetSignal().eq(1)
         yield
-        #yield dut.rx_error.eq(0)
+        # yield dut.rx_error.eq(0)
         yield
         yield
         yield
@@ -316,6 +250,7 @@ def _test_rx(rx, dut):
 
 def _test_tx(tx, dut):
     print("test TX")
+
     def Th():
         yield
         yield
@@ -332,22 +267,22 @@ def _test_tx(tx, dut):
 
     def S(octet):
         assert (yield tx) == 1
-        #assert (yield dut.tx_ack) == 1
+        # assert (yield dut.tx_ack) == 1
         yield dut.tx_data.eq(octet)
         yield dut.tx_ready.eq(1)
         while (yield tx) == 1:
             yield
         yield dut.tx_ready.eq(0)
         assert (yield tx) == 0
-        #assert (yield dut.tx_ack) == 0
+        # assert (yield dut.tx_ack) == 0
         yield from Th()
 
     def D(bit):
-        #assert (yield dut.tx_ack) == 0
+        # assert (yield dut.tx_ack) == 0
         yield from B(bit)
 
     def E():
-        #assert (yield dut.tx_ack) == 0
+        # assert (yield dut.tx_ack) == 0
         yield from B(1)
         yield from Th()
 
@@ -369,15 +304,15 @@ def _test(tx, rx, dut):
 
 
 class Loopback(Elaboratable):
-    def __init__(self, tx, rx,clk_freq,baud_rate=9600,debug=False):
-        #leds = Cat([plat.request("user_led") for _ in range(8)])
-        #debug = plat.request("debug")
+    def __init__(self, tx, rx, clk_freq, baud_rate=9600, debug=False):
+        # leds = Cat([plat.request("user_led") for _ in range(8)])
+        # debug = plat.request("debug")
         self.debug = debug
         self.uart = UART(tx, rx, clk_freq=clk_freq, baud_rate=baud_rate)
         self.RX = self.uart.RX
         self.TX = self.uart.TX
 
-    def elaborate(self,platform):
+    def elaborate(self, platform):
         m = Module()
 
         m.submodules.uart = self.uart
@@ -425,6 +360,7 @@ class Loopback(Elaboratable):
 
         return m
 
+
 if __name__ == "__main__":
     import sys, argparse
     from nmigen import cli
@@ -432,7 +368,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "type", choices=["uart","sim", "test", "loopback"], default="uart"
+        "type", choices=["uart", "sim", "test", "loopback"], default="uart"
     )
 
     cli.main_parser(parser)
@@ -445,22 +381,23 @@ if __name__ == "__main__":
     if args.type == "sim":
         freq = 4800
         tb = UART(tx, rx, clk_freq=freq, baud_rate=1200)
-        with pysim.Simulator(tb,
+        with pysim.Simulator(
+            tb,
             vcd_file=open("ctrl.vcd", "w"),
             gtkw_file=open("ctrl.gtkw", "w"),
-            traces=[tx,rx]) as sim:
+            traces=[tx, rx],
+        ) as sim:
             sim.add_clock(freq)
-            sim.add_sync_process(_test(tx,rx,tb))
-            #sim.run_until(100e-6, run_passive=True)
+            sim.add_sync_process(_test(tx, rx, tb))
+            # sim.run_until(100e-6, run_passive=True)
             sim.run()
 
     if args.type == "uart":
         tb = UART(tx, rx, clk_freq=4800, baud_rate=1200)
-        ios = (tx, rx,tb.TX.tx_data,tb.RX.rx_data)
+        ios = (tx, rx, tb.TX.tx_data, tb.RX.rx_data)
         cli.main_runner(parser, args, tb, name=args.type, ports=ios)
 
     if args.type == "loopback":
-        tb = Loopback(tx,rx)
-        ios = (tx,rx)
+        tb = Loopback(tx, rx)
+        ios = (tx, rx)
         cli.main_runner(parser, args, tb, name=args.type, ports=ios)
-

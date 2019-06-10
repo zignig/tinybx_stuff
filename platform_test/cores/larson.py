@@ -1,19 +1,21 @@
 from nmigen import *
 from nmigen.cli import main, pysim
 
+
 class OnOff(Elaboratable):
-    def __init__(self,stretch=200):
-        self.stretcher = Signal(max=stretch+1)
-        self.stretch = stretch 
+    def __init__(self, stretch=200):
+        self.stretcher = Signal(max=stretch + 1)
+        self.stretch = stretch
         self.o = Signal()
 
-    def elaborate(self,platform):
+    def elaborate(self, platform):
         m = Module()
         m.d.sync += self.stretcher.eq(self.stretcher + 1)
         with m.If(self.stretch == self.stretcher):
             m.d.sync += self.stretcher.eq(0)
             m.d.sync += self.o.eq(~self.o)
         return m
+
 
 # PWM up and down ramping on enable
 class Fade(Elaboratable):
@@ -38,12 +40,12 @@ class Fade(Elaboratable):
             # PWM
             with m.If(self.value == 2 ** self.width):
                 m.d.comb += self.o.eq(1)
-            with m.Elif(self.counter <= self.value ):
+            with m.Elif(self.counter <= self.value):
                 m.d.comb += self.o.eq(1)
 
             with m.If(self.value == 0):
                 m.d.comb += self.o.eq(0)
-            with m.Elif(self.counter > self.value ):
+            with m.Elif(self.counter > self.value):
                 m.d.comb += self.o.eq(0)
 
             m.d.sync += self.counter.eq(self.counter + 1)
@@ -62,6 +64,7 @@ class Fade(Elaboratable):
             m.d.comb += self.o.eq(0)
 
         return m
+
 
 class Larson(Elaboratable):
     def __init__(self, width=5, stretch=10):
@@ -94,13 +97,14 @@ class Larson(Elaboratable):
             m.d.sync += self.track.eq(0)
         return m
 
+
 class FadeTest(Elaboratable):
-    def __init__(self,stretch=500):
+    def __init__(self, stretch=500):
         self.o = Signal()
         self.stretch = stretch
 
-    def elaborate(self,platform):
-        m = Module() 
+    def elaborate(self, platform):
+        m = Module()
         fader = Fade()
         onoff = OnOff(stretch=self.stretch)
         m.d.sync += fader.active.eq(onoff.o)
@@ -111,16 +115,17 @@ class FadeTest(Elaboratable):
 
         return m
 
+
 if __name__ == "__main__":
-    #b = Larson(width=4, stretch=50)
-    #pins = (b.track, b.stretcher, b.stretch, b.updown)
-    #main(b, pins, name="top")
-    #f = Fade()
-    #pins = (f.o,f.active,f.counter,f.value,f.enable)
-    #main(f,pins,name="top")
-    #c = OnOff(stretch=500)
-    #pins = (c.o,c.stretch,c.stretcher)
-    #main(c,pins,name="top")
+    # b = Larson(width=4, stretch=50)
+    # pins = (b.track, b.stretcher, b.stretch, b.updown)
+    # main(b, pins, name="top")
+    # f = Fade()
+    # pins = (f.o,f.active,f.counter,f.value,f.enable)
+    # main(f,pins,name="top")
+    # c = OnOff(stretch=500)
+    # pins = (c.o,c.stretch,c.stretcher)
+    # main(c,pins,name="top")
     f = FadeTest(stretch=4000)
-    pins = (f.o)
-    main(f,pins,name="fader")
+    pins = f.o
+    main(f, pins, name="fader")
