@@ -1,8 +1,8 @@
 J init
 
 .macro delay 
-    MOVL R2,255
-    MOVH R2,255
+    MOVL R5,255
+    MOVH R5,55
     JAL R7,wait
 .endm
 
@@ -14,22 +14,22 @@ J init
 .endm 
 
 init:
-    NOP
     MOVL R4,48 
-    MOVL R5,0
+    MOVH R4,0
+    MOVL R1,90
+    MOVH R1,0
 loop:
-    STX R1, R0,0
-    ADDI R1, 1
-    MOVL R3,1
-    STX R3, R0, 1
-    MOVL R3,0
-    STX R3, R0, 1
-    STX R4, R0, 2
+    STX R4, R0, 2 
+    MOVL R3,1     
+    STX R3, R0, 1 
+    MOVL R3,0     
+    STX R3, R0, 1 
     ADDI R4,1
+    multi
     J loop
 
 wait:
-    SUBI R2, 1
-    CMP R2,R3
+    SUBI R5, 1
+    CMP R5,R6
     JNZ wait
     JR R7,0

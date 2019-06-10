@@ -67,7 +67,7 @@ class CPU(Elaboratable):
         # m.d.comb += leds.eq(b.pins)
         m.d.comb += leds[0].eq(b.pins)
         m.d.comb += leds[1].eq(debug_uart.TX.tx_ready)
-        m.d.comb += leds[2].eq(debug_uart.RX.rx_ready)
+        m.d.comb += leds[2].eq(debug_uart.TX.tx_ack)
 
         return m
 
