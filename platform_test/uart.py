@@ -107,7 +107,7 @@ class TX(Elaboratable):
 
         with m.FSM(reset="IDLE") as fsm:
             with m.State("IDLE"):
-                m.d.sync += self.tx_ack.eq(0)
+                m.d.sync += self.tx_ack.eq(1)
                 with m.If(self.tx_ready):
                     m.d.sync += tx_counter.eq(self.divisor - 1)
                     m.d.sync += tx_latch.eq(self.tx_data)
@@ -118,7 +118,7 @@ class TX(Elaboratable):
             with m.State("START"):
                 with m.If(tx_strobe):
                     m.d.sync += self.tx.eq(0)
-                    m.d.sync += self.tx_ack.eq(1)
+                    m.d.sync += self.tx_ack.eq(0)
                     m.next = "DATA"
 
             with m.State("DATA"):
@@ -269,22 +269,22 @@ def _test_tx(tx, dut):
 
     def S(octet):
         assert (yield tx) == 1
-        # assert (yield dut.tx_ack) == 1
+        assert (yield dut.tx_ack) == 1
         yield dut.tx_data.eq(octet)
         yield dut.tx_ready.eq(1)
         while (yield tx) == 1:
             yield
         yield dut.tx_ready.eq(0)
         assert (yield tx) == 0
-        # assert (yield dut.tx_ack) == 0
+        assert (yield dut.tx_ack) == 0
         yield from Th()
 
     def D(bit):
-        # assert (yield dut.tx_ack) == 0
+        assert (yield dut.tx_ack) == 0
         yield from B(bit)
 
     def E():
-        # assert (yield dut.tx_ack) == 0
+        assert (yield dut.tx_ack) == 0
         yield from B(1)
         yield from Th()
 
