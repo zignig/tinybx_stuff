@@ -107,7 +107,7 @@ class TX(Elaboratable):
 
         with m.FSM(reset="IDLE") as fsm:
             with m.State("IDLE"):
-                m.d.sync += self.tx_ack.eq(1)
+                m.d.sync += self.tx_ack.eq(0)
                 with m.If(self.tx_ready):
                     m.d.sync += tx_counter.eq(self.divisor - 1)
                     m.d.sync += tx_latch.eq(self.tx_data)
@@ -118,6 +118,7 @@ class TX(Elaboratable):
             with m.State("START"):
                 with m.If(tx_strobe):
                     m.d.sync += self.tx.eq(0)
+                    m.d.sync += self.tx_ack.eq(1)
                     m.next = "DATA"
 
             with m.State("DATA"):
@@ -262,6 +263,7 @@ def _test_tx(tx, dut):
         yield
 
     def B(bit):
+        print("BIT ",bit)
         yield from T()
         assert (yield tx) == bit
 
@@ -287,6 +289,7 @@ def _test_tx(tx, dut):
         yield from Th()
 
     def O(octet, bits):
+        print("data ",str(octet)," ",str(bits))
         yield from S(octet)
         for bit in bits:
             yield from D(bit)
