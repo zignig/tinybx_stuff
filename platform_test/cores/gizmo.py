@@ -1,9 +1,25 @@
 # Gizmos auto attach to a the boneless IO
 from nmigen import *
+from collections import OrderedDict
 
 # TODO gizmos need register maps and bit maps
 # that add their names into the assembler setup
 # rework address map so it can pre cacluate
+
+class _GizmoCollection:
+    def __init__(self):
+        object.__setattr__(self,"_modules",OrderedDict())
+
+    def __iadd__(self, modules):
+        for module in modules:
+            self._modules[module] = module
+        return self
+
+    def __setattr__(self, name, submodule):
+        self._modules[name] = submodule
+
+    def __setitem__(self, name, value):
+        return self.__setattr__(name, value)
 
 
 class BIT:
@@ -121,6 +137,7 @@ class FakeBoneless:
 
 
 if __name__ == "__main__":
+    a = _GizmoCollection()
     print("Activate the Gizmotron")
     tg = TestGizmo("test")
     m = Module()
