@@ -2,9 +2,9 @@ import itertools
 
 from nmigen.build import Resource, Subsignal, Pins
 from nmigen.build import ResourceError
-from .gizmo import Gizmo,IO
+from .gizmo import Gizmo, IO
 
-from nmigen import * 
+from nmigen import *
 
 
 class UserLeds(Gizmo):
@@ -16,8 +16,8 @@ class UserLeds(Gizmo):
                 print(l)
                 leds.append(l)
             except ResourceError:
-                break 
+                break
 
         leds = Cat(led.o for led in leds)
-        o = IO(sig_out=leds,name="user_leds")
+        o = IO(sig_out=leds, name="user_leds")
         self.add_reg(o)
