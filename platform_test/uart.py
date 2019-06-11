@@ -263,7 +263,7 @@ def _test_tx(tx, dut):
         yield
 
     def B(bit):
-        print("BIT ",bit)
+        print("BIT ", bit)
         yield from T()
         assert (yield tx) == bit
 
@@ -289,7 +289,7 @@ def _test_tx(tx, dut):
         yield from Th()
 
     def O(octet, bits):
-        print("data ",str(octet)," ",str(bits))
+        print("data ", str(octet), " ", str(bits))
         yield from S(octet)
         for bit in bits:
             yield from D(bit)
@@ -301,9 +301,16 @@ def _test_tx(tx, dut):
     yield from O(0x00, [0, 0, 0, 0, 0, 0, 0, 0])
 
 
+def tail():
+    for i in range(50):
+        yield
+
+
 def _test(tx, rx, dut):
     yield from _test_rx(rx, dut.RX)
     yield from _test_tx(tx, dut.TX)
+    # add some space a the end where nothing happens
+    yield from tail()
 
 
 class Loopback(Elaboratable):

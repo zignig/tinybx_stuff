@@ -8,11 +8,6 @@ from nmigen.cli import main
 from uart import UART
 
 
-class Gizmo:
-    def __init__(self):
-        pass
-
-
 class Boneless(Elaboratable):
     def __init__(self, uart, has_pins=True, asmfile="asm/tx.asm"):
         self.memory = Memory(width=16, depth=512)  # max of  8*1024 on the 8k
@@ -26,7 +21,7 @@ class Boneless(Elaboratable):
         self.memory.init = code.code
         self.devices = []
 
-        # Add the uart
+        # Gizmos
 
     def elaborate(self, platform):
         m = Module()

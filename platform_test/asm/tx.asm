@@ -1,8 +1,15 @@
 J init
+; Some delay macros 
+
+wait:
+    SUBI R5, 1
+    CMP R5,R6
+    JNZ wait
+    JR R7,0
 
 .macro delay 
     MOVL R5,255
-    MOVH R5,55
+    MOVH R5,255
     JAL R7,wait
 .endm
 
@@ -13,6 +20,7 @@ J init
     delay
 .endm 
 
+; 
 init:
     MOVL R4,48 
     MOVH R4,0
@@ -28,8 +36,3 @@ loop:
     multi
     J loop
 
-wait:
-    SUBI R5, 1
-    CMP R5,R6
-    JNZ wait
-    JR R7,0
