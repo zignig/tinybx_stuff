@@ -28,10 +28,10 @@ class CPU(Elaboratable):
 
         # TODO gizmo needs **Kwargs , to add extra variables to gizmos
 
-        l = UserLeds("Leds", platform=platform)
+        l = UserLeds("leds", platform=platform)
         b.add_gizmo(l)
 
-        s = Serial("seial_port", platform=platform)  # should pass baud
+        s = Serial("serial_port", platform=platform)  # should pass baud
         b.add_gizmo(s)
 
         c = Counter("counter1", platform=platform)
@@ -42,6 +42,7 @@ class CPU(Elaboratable):
 
         # Assign addresses , get code etch
         # TODO test and fix
+        # TODO integrate assembler
         self.b.prepare()
 
     def elaborate(self, platform):
