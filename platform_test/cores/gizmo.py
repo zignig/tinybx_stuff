@@ -7,8 +7,9 @@ from collections import OrderedDict
 # rework address map so it can pre cacluate
 
 class _GizmoCollection:
+    " currently unused "
     def __init__(self):
-        object.__setattr__(self,"_modules",OrderedDict())
+        object.__setattr__(self, "_modules", OrderedDict())
 
     def __iadd__(self, modules):
         for module in modules:
@@ -21,7 +22,7 @@ class _GizmoCollection:
     def __setitem__(self, name, value):
         return self.__setattr__(name, value)
 
-
+# TODO create asm definitions named correctly
 class BIT:
     " create a named bit register"
 
@@ -30,8 +31,12 @@ class BIT:
         self.pos = pos
 
 
+
 class IO:
-    " define and bind a read write register"
+    """ 
+    Define and bind a read write register
+    maps ext_port inside a boneless processor 
+    """
 
     def __init__(self, sig_in=None, sig_out=None, name=None):
         self.sig_in = sig_in
@@ -56,6 +61,8 @@ class IO:
 
 
 class Gizmo:
+    debug = False 
+
     def __init__(self, name, platform=None):
         self.platform = platform
         self.name = name
@@ -74,26 +81,29 @@ class Gizmo:
     def add_reg(self, reg):
         self.registers.append(reg)
 
-    def prepare(self,boneless):
-        print("Preparing "+str(self.name)+" within "+str(boneless))
+    def prepare(self, boneless):
+        print("Preparing " + str(self.name) + " within " + str(boneless))
         print(self.registers)
         print(self.devices)
         print("----")
 
     def attach(self, boneless, m, platform):
-        print("<< " + self.name + " >>")
+        if self.debug:
+            print("<< " + self.name + " >>")
         if len(self.registers) > 0:
             for reg in self.registers:
                 with m.If(boneless.ext_port.addr == boneless.addr):
                     self.addr = int(boneless.addr)
                     if reg.has_input():
-                        print("Binding Input")
-                        print(reg.sig_in)
+                        if self.debug:
+                            print("Binding Input")
+                            print(reg.sig_in)
                         with m.If(boneless.ext_port.r_en):
                             m.d.sync += boneless.ext_port.r_data.eq(reg.sig_in)
                     if reg.has_output():
-                        print("Binding Output")
-                        print(reg.sig_out)
+                        if self.debug:
+                            print("Binding Output")
+                            print(reg.sig_out)
                         with m.If(boneless.ext_port.w_en):
                             m.d.sync += reg.sig_out.eq(boneless.ext_port.w_data)
                     # TODO , map the addresses and make it so you can hard set
@@ -119,6 +129,7 @@ class TestGizmo(Gizmo):
         self.add_reg(r)
         r = IO(Signal(), Signal())
         self.add_reg(r)
+
 
 # Fake classes for testing
 class ex_int:

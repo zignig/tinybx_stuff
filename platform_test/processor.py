@@ -5,41 +5,37 @@ from nmigen import *
 from nmigen.back import pysim
 from nmigen.cli import main
 
-from uart import UART
 from cores.gizmo import Gizmo
 
 
 class Boneless(Elaboratable):
-    def __init__(self, uart, has_pins=True, asmfile="asm/base.asm"):
+    def __init__(self,asm_file="asm/base.asm"):
         self.memory = Memory(width=16, depth=512)  # max of  8*1024 on the 8k
         self.ext_port = _ExternalPort()
-        self.pins = Signal(16, name="pins") if has_pins else None
-        self.uart = uart
-        self.asmfile = asmfile
+        self.asm_file = asm_file
 
         # Gizmos
-        self.addr = 0 
-        # TODO , gizmoize blinky and uart
+        self.addr = 0
         self.gizmos = []
 
     def add_gizmo(self, giz):
         self.gizmos.append(giz)
 
     def insert_gizmos(self, m, platform):
-        print("INSERT GIZMOS")
+        print("Insert Gizmos")
         for g in self.gizmos:
             g.attach(self, m, platform)
 
     def prepare(self):
         # Prepare all the gizmos and map their addresses
-        print("Preparing gizmos")
+        print("Preparing Gizmos")
         for g in self.gizmos:
-           g.prepare(self)
+            g.prepare(self)
 
         # TODO , map registers bits and code fragments from gizmos
 
         # Code
-        code = Assembler(file_name=self.asmfile)
+        code = Assembler(file_name=self.asm_file)
         code.assemble()
         self.memory.init = code.code
         self.devices = []
