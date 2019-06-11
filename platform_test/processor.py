@@ -15,15 +15,10 @@ class Boneless(Elaboratable):
         self.ext_port = _ExternalPort()
         self.pins = Signal(16, name="pins") if has_pins else None
         self.uart = uart
-
-        # Code
-        code = Assembler(file_name=asmfile)
-        code.assemble()
-        self.memory.init = code.code
-        self.devices = []
+        self.asmfile = asmfile
 
         # Gizmos
-        self.addr = 0  # ( blinky and uarts are built in )
+        self.addr = 0 
         # TODO , gizmoize blinky and uart
         self.gizmos = []
 
@@ -32,8 +27,22 @@ class Boneless(Elaboratable):
 
     def insert_gizmos(self, m, platform):
         print("INSERT GIZMOS")
-        for i in self.gizmos:
-            i.attach(self, m, platform)
+        for g in self.gizmos:
+            g.attach(self, m, platform)
+
+    def prepare(self):
+        # Prepare all the gizmos and map their addresses
+        print("Preparing gizmos")
+        for g in self.gizmos:
+           g.prepare(self)
+
+        # TODO , map registers bits and code fragments from gizmos
+
+        # Code
+        code = Assembler(file_name=self.asmfile)
+        code.assemble()
+        self.memory.init = code.code
+        self.devices = []
 
     def elaborate(self, platform):
         m = Module()

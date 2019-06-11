@@ -58,6 +58,12 @@ class Gizmo:
     def add_reg(self, reg):
         self.registers.append(reg)
 
+    def prepare(self,boneless):
+        print("Preparing "+str(self.name)+" within "+str(boneless))
+        print(self.registers)
+        print(self.devices)
+        print("----")
+
     def attach(self, boneless, m, platform):
         print("<< " + self.name + " >>")
         if len(self.registers) > 0:
@@ -97,7 +103,6 @@ class TestGizmo(Gizmo):
         self.add_reg(r)
         r = IO(Signal(), Signal())
         self.add_reg(r)
-
 
 # Fake classes for testing
 class ex_int:

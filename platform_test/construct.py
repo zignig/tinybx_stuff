@@ -45,6 +45,30 @@ class Loop(Elaboratable):
 
 
 class CPU(Elaboratable):
+    def __init__(self,platform):
+        self.uart = None
+        b = Boneless(self.uart)
+        self.b = b
+        self.platform = platform
+
+        # TODO gizmo needs **Kwargs , to add extra variables to gizmos
+
+        l = UserLeds("Leds",platform=platform)
+        b.add_gizmo(l)
+        
+        s = Serial("seial_port", platform=platform) # should pass baud
+        b.add_gizmo(s)
+
+        c = Counter("counter1", platform=platform)
+        b.add_gizmo(c)
+
+        c2 = Counter("counter2", platform=platform)
+        b.add_gizmo(c2)
+
+        # Assign addresses , get code etch
+        # TODO test and fix
+        self.b.prepare()
+
     def elaborate(self, platform):
         clk16 = platform.request("clk16", 0)
 
@@ -58,8 +82,8 @@ class CPU(Elaboratable):
         # debug_uart = UART(serial.tx, serial.rx, clock.frequency, 57600)
         debug_uart = None
 
-        b = Boneless(debug_uart)
-        m.submodules.boneless = b
+        m.submodules.boneless = self.b
+        # b = self.b
 
         # Attach two test gizmos
         # tg = TestGizmo("test_gizmo")
@@ -68,15 +92,8 @@ class CPU(Elaboratable):
         # tg2 = TestGizmo("test_gizmo_2")
         # b.add_gizmo(tg2)
 
-        l = UserLeds("Leds", platform=platform)
-        b.add_gizmo(l)
-        s = Serial("seial_port", platform=platform)
-        b.add_gizmo(s)
-
-        c = Counter("counter1", platform=platform)
-        b.add_gizmo(c)
-        c2 = Counter("counter2", platform=platform)
-        b.add_gizmo(c2)
+        #l = UserLeds("Leds", platform=platform)
+        #b.add_gizmo(l)
         # TODO remove following if the gizmotron works
 
         # Attach the blinky
@@ -100,4 +117,5 @@ if __name__ == "__main__":
     from plat import BB
 
     platform = BB()
-    platform.build(CPU(), do_program=True)
+    cpu = CPU(platform)
+    platform.build(cpu, do_program=True)
