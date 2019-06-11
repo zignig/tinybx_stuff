@@ -14,6 +14,9 @@ from cores.larson import OnOff
 from cores.breathe import Breathe
 
 from cores.gizmo import TestGizmo
+from cores.user_leds import UserLeds
+from cores.serial import Serial
+from cores.counter import Counter
 
 
 class Loop(Elaboratable):
@@ -50,33 +53,43 @@ class CPU(Elaboratable):
         m.d.comb += ClockSignal().eq(clk16.i)
 
         # Create the serial port
-        clock = platform.lookup("clk16").clock
-        serial = platform.request("serial", 0)
-        debug_uart = UART(serial.tx, serial.rx, clock.frequency, 57600)
+        #clock = platform.lookup("clk16").clock
+        #serial = platform.request("serial", 0)
+        #debug_uart = UART(serial.tx, serial.rx, clock.frequency, 57600)
+        debug_uart = None
 
         b = Boneless(debug_uart)
         m.submodules.boneless = b
 
         # Attach two test gizmos
-        tg = TestGizmo("test_gizmo")
-        b.add_gizmo(tg)
+        #tg = TestGizmo("test_gizmo")
+        #b.add_gizmo(tg)
 
-        tg2 = TestGizmo("test_gizmo_2")
-        b.add_gizmo(tg2)
+        #tg2 = TestGizmo("test_gizmo_2")
+        #b.add_gizmo(tg2)
 
+        l = UserLeds('Leds',platform=platform)
+        b.add_gizmo(l)
+        s = Serial('seial_port',platform=platform)
+        b.add_gizmo(s)
+
+        c = Counter("counter1",platform=platform)
+        b.add_gizmo(c)
+        c2 = Counter("counter2",platform=platform)
+        b.add_gizmo(c2)
         # Attach the blinky
-        leds = []
-        for n in itertools.count():
-            try:
-                leds.append(platform.request("user_led", n))
-            except ResourceError:
-                break
-
-        leds = Cat(led.o for led in leds)
+        #leds = []
+        #for n in itertools.count():
+        #    try:
+        #        leds.append(platform.request("user_led", n))
+        #    except ResourceError:
+        #        break
+#
+#        leds = Cat(led.o for led in leds)
         # m.d.comb += leds.eq(b.pins)
-        m.d.comb += leds[0].eq(b.pins)
-        m.d.comb += leds[1].eq(debug_uart.TX.tx_ready)
-        m.d.comb += leds[2].eq(debug_uart.TX.tx_ack)
+#        m.d.comb += leds[0].eq(b.pins)
+#        m.d.comb += leds[1].eq(debug_uart.TX.tx_ready)
+#        m.d.comb += leds[2].eq(debug_uart.TX.tx_ack)
 
         return m
 

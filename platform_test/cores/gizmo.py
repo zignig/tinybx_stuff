@@ -24,25 +24,31 @@ class IO:
         return str(self.sig_in)+"--"+str(self.sig_out)
 
 class Gizmo:
-    def __init__(self, name):
+    def __init__(self, name,platform=None):
+        self.platform =  platform
         self.name = name
         self.registers = []
+        self.devices = []
         self.code = "" # assembly code for the gizmo TODO , auto attach
         self.addr= -1
         self.build()
 
+    def build(self):
+        print("OVERRIDE ME")
+
+    def add_device(self,dev):
+        self.devices.append(dev)
+
     def add_reg(self,reg):
         self.registers.append(reg)
 
-    def build(self,device=None):
-        print("OVERRIDE ME")
 
     def attach(self,boneless,m,platform):
+        print("<< "+self.name+" >>")
         if len(self.registers)> 0:
             for reg in self.registers:
                 with m.If(boneless.ext_port.addr == boneless.addr):
                     self.addr = int(boneless.addr)
-                    print("Bind in/out to boneless_ext_port data")
                     if reg.has_input():
                         print("Binding Input")
                         print(reg.sig_in)
@@ -56,6 +62,10 @@ class Gizmo:
                     boneless.addr += 1 
                     print()
                     print(self)
+        if len(self.devices) > 0:
+            for dev in self.devices:
+                print(dev)
+                m.submodules += dev 
 
     def __repr__(self):
         return "<"+self.name+"|"+str(self.addr)+"|"+str(self.registers)+">"
@@ -68,6 +78,7 @@ class TestGizmo(Gizmo):
         r = IO(Signal(),Signal())
         self.add_reg(r)
 
+# Fake classes for testing 
 class ex_int:
     def __init__(self):
         self.addr = Signal(16) 
