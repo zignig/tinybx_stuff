@@ -1,17 +1,7 @@
 import itertools
 from nmigen import *
-from nmigen_boards.tinyfpga_bx import *
-from nmigen.build import Resource, Subsignal, Pins
-from nmigen.build import ResourceError
-from nmigen.tools import bits_for
-
-from boneless.gateware.core_fsm import BonelessFSMTestbench
 
 from processor import Boneless
-
-# Some blinky testing TODO , gizmoize
-from cores.larson import OnOff
-from cores.breathe import Breathe
 
 # Working gizmos
 from cores.gizmo import TestGizmo

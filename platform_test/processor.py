@@ -1,12 +1,12 @@
 from boneless.arch.instr import *
 from boneless.gateware.core_fsm import BonelessCoreFSM, _ExternalPort
 from boneless.assembler.asm import Assembler
+
 from nmigen import *
 from nmigen.back import pysim
 from nmigen.cli import main
 
 from cores.gizmo import Gizmo
-
 
 class Boneless(Elaboratable):
     def __init__(self,asm_file="asm/base.asm"):
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     cli.main_parser(parser)
     args = parser.parse_args()
 
-    tb = Boneless(has_pins=True)
+    tb = Boneless()
     ios = ()
 
     cli.main_runner(parser, args, tb, name="boneless_core", ports=ios)
