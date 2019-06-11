@@ -41,8 +41,12 @@ class IO:
     def __init__(self, sig_in=None, sig_out=None, name=None):
         self.sig_in = sig_in
         self.sig_out = sig_out
+        self.addr = -1
         if name is not None:
             self.name = name
+
+    def set_addr(self,addr):
+        self.addr = addr
 
     def has_input(self):
         if self.sig_in is not None:
@@ -57,23 +61,24 @@ class IO:
             return False
 
     def __repr__(self):
-        return str(self.sig_in) + "--" + str(self.sig_out)
+        return str(self.addr) + "--" + str(self.sig_in) + "--" + str(self.sig_out)
 
 
 class Gizmo:
-    debug = False 
+    debug = True 
 
-    def __init__(self, name, platform=None):
+    def __init__(self, name, platform=None,**kwargs):
+        for i , j in kwargs.items():
+           setattr(self,i,j) 
         self.platform = platform
         self.name = name
         self.registers = []
         self.devices = []
         self.code = ""  # assembly code for the gizmo TODO , auto attach
-        self.addr = -1
         self.build()
 
     def build(self):
-        print("OVERRIDE ME")
+        print("OVERRIDE ME!")
 
     def add_device(self, dev):
         self.devices.append(dev)
@@ -86,38 +91,39 @@ class Gizmo:
         print(self.registers)
         print(self.devices)
         print("----")
+        if len(self.registers) > 0:
+            for reg in self.registers:
+                reg.set_addr(boneless.addr)
+                boneless.addr += 1
 
     def attach(self, boneless, m, platform):
         if self.debug:
             print("<< " + self.name + " >>")
         if len(self.registers) > 0:
             for reg in self.registers:
-                with m.If(boneless.ext_port.addr == boneless.addr):
-                    self.addr = int(boneless.addr)
+                with m.If(boneless.ext_port.addr == reg.addr):
                     if reg.has_input():
                         if self.debug:
-                            print("Binding Input")
+                            print("Binding Input "+ str(reg.addr),)
                             print(reg.sig_in)
                         with m.If(boneless.ext_port.r_en):
                             m.d.sync += boneless.ext_port.r_data.eq(reg.sig_in)
                     if reg.has_output():
                         if self.debug:
-                            print("Binding Output")
+                            print("Binding Output " + str(reg.addr),)
                             print(reg.sig_out)
                         with m.If(boneless.ext_port.w_en):
                             m.d.sync += reg.sig_out.eq(boneless.ext_port.w_data)
-                    # TODO , map the addresses and make it so you can hard set
-                    # addresses and the gizmotron with map around them.
-                    boneless.addr += 1
-                    print()
-                    print(self)
+                    if self.debug:
+                        print()
+                        print(self)
         if len(self.devices) > 0:
             for dev in self.devices:
                 print(dev)
                 m.submodules += dev
 
     def __repr__(self):
-        return "<" + self.name + "|" + str(self.addr) + "|" + str(self.registers) + ">"
+        return "<" + self.name + "|" + str(self.devices) + "|" + str(self.registers) + ">"
 
 
 class TestGizmo(Gizmo):

@@ -12,10 +12,10 @@ class Serial(Gizmo):
     " Uart connection in 4 registers"
 
     def build(self):
-        serial = self.platform.request("serial", 0)
+        serial = self.platform.request("serial", self.number)
         print(serial)
         clock = self.platform.lookup("clk16").clock
-        uart = UART(serial.tx, serial.rx, clock.frequency, 9600)
+        uart = UART(serial.tx, serial.rx, clock.frequency, self.baud)
         self.add_device(uart)
 
         tx_status = IO(
@@ -37,7 +37,6 @@ class Serial(Gizmo):
 
 class SerialLoop(Gizmo):
     " Loopback uart on serial 0 and serial 1"
-
     def build(self):
 
         m = Module()

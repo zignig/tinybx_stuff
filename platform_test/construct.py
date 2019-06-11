@@ -8,6 +8,7 @@ from cores.gizmo import TestGizmo
 from cores.user_leds import UserLeds
 from cores.serial import Serial
 from cores.counter import Counter
+from cores.pwm import Pwm
 
 
 class CPU(Elaboratable):
@@ -21,7 +22,7 @@ class CPU(Elaboratable):
         l = UserLeds("leds", platform=platform)
         b.add_gizmo(l)
 
-        s = Serial("serial_port", platform=platform)  # should pass baud
+        s = Serial("serial_port",platform=platform,number=0,baud=9600)  # should pass baud
         b.add_gizmo(s)
 
         c = Counter("counter1", platform=platform)
@@ -29,6 +30,9 @@ class CPU(Elaboratable):
 
         c2 = Counter("counter2", platform=platform)
         b.add_gizmo(c2)
+
+        #p = Pwm("pwm",platform=platform,pin=12)
+        #b.add_gizmo(p)
 
         # Assign addresses , get code etch
         # TODO test and fix
