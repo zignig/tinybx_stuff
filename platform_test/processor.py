@@ -6,7 +6,7 @@ from nmigen.back import pysim
 from nmigen.cli import main
 
 from uart import UART
-
+from cores.gizmo  import Gizmo
 
 class Boneless(Elaboratable):
     def __init__(self, uart, has_pins=True, asmfile="asm/tx.asm"):
@@ -22,6 +22,17 @@ class Boneless(Elaboratable):
         self.devices = []
 
         # Gizmos
+        self.addr = 5 # ( blinky and uarts are built in )
+        # TODO , gizmoize blinky and uart
+        self.gizmos = []
+
+    def add_gizmo(self,giz):
+        self.gizmos.append(giz)
+
+    def insert_gizmos(self,m,platform):
+        print("GIZMOS")
+        for i in self.gizmos:
+            i.attach(self,m,platform)
 
     def elaborate(self, platform):
         m = Module()
@@ -59,6 +70,8 @@ class Boneless(Elaboratable):
         with m.If(self.ext_port.addr == 4):
             with m.If(self.ext_port.r_en):
                 m.d.sync += self.ext_port.r_data.eq(self.uart.RX.rx_data)
+
+        self.insert_gizmos(m,platform)
 
         m.submodules.mem_rdport = mem_rdport = self.memory.read_port(transparent=False)
         m.submodules.mem_wrport = mem_wrport = self.memory.write_port()

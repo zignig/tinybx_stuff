@@ -13,6 +13,8 @@ from processor import Boneless
 from cores.larson import OnOff
 from cores.breathe import Breathe
 
+from cores.gizmo import TestGizmo
+
 
 class Loop(Elaboratable):
     " Loopback uart on serial 0 and serial 1"
@@ -54,6 +56,13 @@ class CPU(Elaboratable):
 
         b = Boneless(debug_uart)
         m.submodules.boneless = b
+
+        # Attach two test gizmos
+        tg = TestGizmo("test_gizmo")
+        b.add_gizmo(tg)
+
+        tg2 = TestGizmo("test_gizmo_2")
+        b.add_gizmo(tg2)
 
         # Attach the blinky
         leds = []
