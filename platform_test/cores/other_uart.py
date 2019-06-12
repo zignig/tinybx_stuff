@@ -117,15 +117,19 @@ class RS232TX(Elaboratable):
 
 
 class UART(Elaboratable):
-    def __init__(self,clock,baud=9600):
+    def __init__(self,tx_pin,rx_pin,clock,baud=9600):
         tuning_word = round(2**32*baud/clock)
         self.tx = RS232TX(tuning_word)
         self.rx = RS232RX(tuning_word)
+        self.tx_pin = tx_pin
+        self.rx_pin = rx_pin
 
     def elaborate(self, platform):
         m = Module()
         m.submodules.tx = self.tx
         m.submodules.rx = self.rx
+        m.d.comb += self.tx_pin.eq(self.tx.tx)
+        m.d.comb += self.rx.rx.eq(self.rx_pin)
         return m
 
 
