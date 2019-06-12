@@ -1,5 +1,8 @@
 from nmigen import *
 from nmigen.lib.cdc import MultiReg
+from nmigen.back.pysim import *
+
+import unittest
 
 # lifed from https://git.m-labs.hk/M-Labs/HeavyX/src/branch/master/heavycomps/heavycomps
 # experiments with other uart.
@@ -123,3 +126,54 @@ class RS232TX(Elaboratable):
         while not (yield self.ack):
             yield
         yield self.stb.eq(0)
+
+
+class UART(Elaborateable):
+    def __init__(self, tuning_word=2**31):
+        self.tx = RS232TX(tuning_word)
+        self.rx = RS232RX(tuning_word)
+    
+    def elaborate(self, platform):
+        m = Module()
+        m.submodules.tx = self.tx
+        m.submodules.rx = self.rx
+        return m
+
+class Loopback(Elaboratable):
+    def __init__(self, tuning_word=2**31):
+        self.tx = RS232TX(tuning_word)
+        self.rx = RS232RX(tuning_word)
+
+    def elaborate(self, platform):
+        m = Module()
+        m.submodules.tx = self.tx
+        m.submodules.rx = self.rx
+        m.d.comb += self.rx.rx.eq(self.tx.tx)
+        return m
+
+class TestUART(unittest.TestCase):
+    def test_loopback(self):
+        dut = Loopback()
+        test_vector = [32, 129, 201, 39, 0, 255]
+
+        with Simulator(Fragment.get(dut, None),vcd_file=open('uart.vcd','w')) as sim:
+            sim.add_clock(1e-6)
+
+            def send():
+                for value in test_vector:
+                    print(value)
+                    yield from dut.tx.write(value)
+
+            def receive():
+                for value in test_vector:
+                    received = yield from dut.rx.read()
+                    self.assertEqual(received, value)
+
+            sim.add_sync_process(send)
+            sim.add_sync_process(receive)
+            sim.run()
+
+if __name__ == "__main__":
+    tu = TestUART()
+    tu.test_loopback()
+
