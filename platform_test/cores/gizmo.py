@@ -65,6 +65,7 @@ class IO:
 
 
 class Gizmo:
+    " A gizmo is a wrapper around an Elaboratable module that binds to the external interface of the Boneless-CPU"
     debug = True 
 
     def __init__(self, name, platform=None,**kwargs):
@@ -78,15 +79,23 @@ class Gizmo:
         self.build()
 
     def build(self):
+        " add the modules and IO and BITS to itself"
+        print("OVERRIDE ME!")
+
+    def simulator(self):
+        " TODO , create interfaces for the simulator"
         print("OVERRIDE ME!")
 
     def add_device(self, dev):
+        " add a Module to the gizmo "
         self.devices.append(dev)
 
     def add_reg(self, reg):
+        " add an Autobinding register to the Boneless CPU"
         self.registers.append(reg)
 
     def prepare(self, boneless):
+        " Build internal and map external bus addresses " 
         print("Preparing " + str(self.name) + " within " + str(boneless))
         print(self.registers)
         print(self.devices)
@@ -97,6 +106,7 @@ class Gizmo:
                 boneless.addr += 1
 
     def attach(self, boneless, m, platform):
+        " Generate and bind the gateway to the Boneless " 
         if self.debug:
             print("<< " + self.name + " >>")
         if len(self.registers) > 0:
