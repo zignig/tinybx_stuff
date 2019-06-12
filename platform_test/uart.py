@@ -31,16 +31,10 @@ class RS232RX(Elaboratable):
         rx_busy = Signal()
         rx_done = self.stb
         rx_data = self.data
-        m.d.sync += [
-            rx_done.eq(0),
-            rx_r.eq(rx)
-        ]
+        m.d.sync += [rx_done.eq(0), rx_r.eq(rx)]
         with m.If(~rx_busy):
             with m.If(~rx & rx_r):  # look for start bit
-                m.d.sync += [
-                    rx_busy.eq(1),
-                    rx_bitcount.eq(0)
-                ]
+                m.d.sync += [rx_busy.eq(1), rx_bitcount.eq(0)]
         with m.Else():
             with m.If(uart_clk_rxen):
                 m.d.sync += rx_bitcount.eq(rx_bitcount + 1)
@@ -50,16 +44,15 @@ class RS232RX(Elaboratable):
                 with m.Elif(rx_bitcount == 9):
                     m.d.sync += rx_busy.eq(0)
                     with m.If(rx):  # verify stop bit
-                        m.d.sync += [
-                            rx_data.eq(rx_reg),
-                            rx_done.eq(1)
-                        ]
+                        m.d.sync += [rx_data.eq(rx_reg), rx_done.eq(1)]
                 with m.Else():
                     m.d.sync += rx_reg.eq(Cat(rx_reg[1:], rx))
         with m.If(rx_busy):
-            m.d.sync += Cat(phase_accumulator_rx, uart_clk_rxen).eq(phase_accumulator_rx + self.tuning_word)
+            m.d.sync += Cat(phase_accumulator_rx, uart_clk_rxen).eq(
+                phase_accumulator_rx + self.tuning_word
+            )
         with m.Else():
-            m.d.sync += Cat(phase_accumulator_rx, uart_clk_rxen).eq(2**31)
+            m.d.sync += Cat(phase_accumulator_rx, uart_clk_rxen).eq(2 ** 31)
 
         return m
 
@@ -95,25 +88,20 @@ class RS232TX(Elaboratable):
                 tx_reg.eq(self.data),
                 tx_bitcount.eq(0),
                 tx_busy.eq(1),
-                self.tx.eq(0)
+                self.tx.eq(0),
             ]
         with m.Elif(uart_clk_txen & tx_busy):
             m.d.sync += tx_bitcount.eq(tx_bitcount + 1)
             with m.If(tx_bitcount == 8):
                 m.d.sync += self.tx.eq(1)
             with m.Elif(tx_bitcount == 9):
-                m.d.sync += [
-                    self.tx.eq(1),
-                    tx_busy.eq(0),
-                    self.ack.eq(1)
-                ]
+                m.d.sync += [self.tx.eq(1), tx_busy.eq(0), self.ack.eq(1)]
             with m.Else():
-                m.d.sync += [
-                    self.tx.eq(tx_reg[0]),
-                    tx_reg.eq(Cat(tx_reg[1:], 0))
-                ]
+                m.d.sync += [self.tx.eq(tx_reg[0]), tx_reg.eq(Cat(tx_reg[1:], 0))]
         with m.If(tx_busy):
-            m.d.sync += Cat(phase_accumulator_tx, uart_clk_txen).eq(phase_accumulator_tx + self.tuning_word)
+            m.d.sync += Cat(phase_accumulator_tx, uart_clk_txen).eq(
+                phase_accumulator_tx + self.tuning_word
+            )
         with m.Else():
             m.d.sync += Cat(phase_accumulator_tx, uart_clk_txen).eq(0)
 
@@ -128,19 +116,20 @@ class RS232TX(Elaboratable):
         yield self.stb.eq(0)
 
 
-class UART(Elaborateable):
-    def __init__(self, tuning_word=2**31):
+class UART(Elaboratable):
+    def __init__(self, tuning_word=2 ** 31):
         self.tx = RS232TX(tuning_word)
         self.rx = RS232RX(tuning_word)
-    
+
     def elaborate(self, platform):
         m = Module()
         m.submodules.tx = self.tx
         m.submodules.rx = self.rx
         return m
 
+
 class Loopback(Elaboratable):
-    def __init__(self, tuning_word=2**31):
+    def __init__(self, tuning_word=2 ** 31):
         self.tx = RS232TX(tuning_word)
         self.rx = RS232RX(tuning_word)
 
@@ -151,12 +140,13 @@ class Loopback(Elaboratable):
         m.d.comb += self.rx.rx.eq(self.tx.tx)
         return m
 
+
 class TestUART(unittest.TestCase):
     def test_loopback(self):
         dut = Loopback()
         test_vector = [32, 129, 201, 39, 0, 255]
 
-        with Simulator(Fragment.get(dut, None),vcd_file=open('uart.vcd','w')) as sim:
+        with Simulator(Fragment.get(dut, None), vcd_file=open("uart.vcd", "w")) as sim:
             sim.add_clock(1e-6)
 
             def send():
@@ -173,7 +163,7 @@ class TestUART(unittest.TestCase):
             sim.add_sync_process(receive)
             sim.run()
 
+
 if __name__ == "__main__":
     tu = TestUART()
     tu.test_loopback()
-
