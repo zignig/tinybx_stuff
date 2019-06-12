@@ -6,8 +6,10 @@ from collections import OrderedDict
 # that add their names into the assembler setup
 # rework address map so it can pre cacluate
 
+
 class _GizmoCollection:
     " currently unused "
+
     def __init__(self):
         object.__setattr__(self, "_modules", OrderedDict())
 
@@ -22,6 +24,7 @@ class _GizmoCollection:
     def __setitem__(self, name, value):
         return self.__setattr__(name, value)
 
+
 # TODO create asm definitions named correctly
 class BIT:
     " create a named bit register"
@@ -30,6 +33,8 @@ class BIT:
         self.name = name
         self.pos = pos
 
+    def dump(self, name):
+        print("\t" + name + "_" + self.name + " -> " + str(self.pos))
 
 
 class IO:
@@ -42,11 +47,15 @@ class IO:
         self.sig_in = sig_in
         self.sig_out = sig_out
         self.addr = -1
+        self.bits = []
         if name is not None:
             self.name = name
 
-    def set_addr(self,addr):
+    def set_addr(self, addr):
         self.addr = addr
+
+    def add_bit(self, bit):
+        self.bits.append(bit)
 
     def has_input(self):
         if self.sig_in is not None:
@@ -60,23 +69,32 @@ class IO:
         else:
             return False
 
+    def dump(self):
+        print(self.name, "-", self.addr)
+        for bit in self.bits:
+            bit.dump(self.name)
+
     def __repr__(self):
         return str(self.addr) + "--" + str(self.sig_in) + "--" + str(self.sig_out)
 
 
 class Gizmo:
     " A gizmo is a wrapper around an Elaboratable module that binds to the external interface of the Boneless-CPU"
-    debug = True 
+    debug = False
 
-    def __init__(self, name, platform=None,**kwargs):
-        for i , j in kwargs.items():
-           setattr(self,i,j) 
+    def __init__(self, name, platform=None, **kwargs):
+        for i, j in kwargs.items():
+            setattr(self, i, j)
         self.platform = platform
         self.name = name
         self.registers = []
         self.devices = []
         self.code = ""  # assembly code for the gizmo TODO , auto attach
         self.build()
+
+    def dump(self):
+        for r in self.registers:
+            r.dump()
 
     def build(self):
         " add the modules and IO and BITS to itself"
@@ -95,7 +113,7 @@ class Gizmo:
         self.registers.append(reg)
 
     def prepare(self, boneless):
-        " Build internal and map external bus addresses " 
+        " Build internal and map external bus addresses "
         print("Preparing " + str(self.name) + " within " + str(boneless))
         print(self.registers)
         print(self.devices)
@@ -106,7 +124,7 @@ class Gizmo:
                 boneless.addr += 1
 
     def attach(self, boneless, m, platform):
-        " Generate and bind the gateway to the Boneless " 
+        " Generate and bind the gateway to the Boneless "
         if self.debug:
             print("<< " + self.name + " >>")
         if len(self.registers) > 0:
@@ -114,13 +132,13 @@ class Gizmo:
                 with m.If(boneless.ext_port.addr == reg.addr):
                     if reg.has_input():
                         if self.debug:
-                            print("Binding Input "+ str(reg.addr),)
+                            print("Binding Input " + str(reg.addr))
                             print(reg.sig_in)
                         with m.If(boneless.ext_port.r_en):
                             m.d.sync += boneless.ext_port.r_data.eq(reg.sig_in)
                     if reg.has_output():
                         if self.debug:
-                            print("Binding Output " + str(reg.addr),)
+                            print("Binding Output " + str(reg.addr))
                             print(reg.sig_out)
                         with m.If(boneless.ext_port.w_en):
                             m.d.sync += reg.sig_out.eq(boneless.ext_port.w_data)
@@ -133,7 +151,9 @@ class Gizmo:
                 m.submodules += dev
 
     def __repr__(self):
-        return "<" + self.name + "|" + str(self.devices) + "|" + str(self.registers) + ">"
+        return (
+            "<" + self.name + "|" + str(self.devices) + "|" + str(self.registers) + ">"
+        )
 
 
 class TestGizmo(Gizmo):
@@ -141,9 +161,11 @@ class TestGizmo(Gizmo):
     code = "NOP"
 
     def build(self):
-        r = IO(Signal(), Signal())
+        r = IO(Signal(), Signal(), name="first")
+        r.add_bit(BIT("bit_a", 0))
+        r.add_bit(BIT("bit_b", 1))
         self.add_reg(r)
-        r = IO(Signal(), Signal())
+        r = IO(Signal(), Signal(), name="second")
         self.add_reg(r)
 
 
@@ -167,6 +189,7 @@ if __name__ == "__main__":
     a = _GizmoCollection()
     print("Activate the Gizmotron")
     tg = TestGizmo("test")
+    tg.dump()
     m = Module()
     b = FakeBoneless()
     tg.attach(b, m, None)

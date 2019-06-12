@@ -3,6 +3,8 @@ from nmigen_boards.tinyfpga_bx import *
 from nmigen.build import Resource, Subsignal, Pins
 
 "Tiny BX in a BREAD BOARD , with 4 blinky and an FTDI serial "
+
+
 class BB(TinyFPGABXPlatform):
     resources = TinyFPGABXPlatform.resources + [
         # FTDI link back to pc
@@ -16,7 +18,6 @@ class BB(TinyFPGABXPlatform):
         Resource("user_led", 2, Pins("13", conn=("gpio", 0), dir="o")),
         Resource("user_led", 3, Pins("14", conn=("gpio", 0), dir="o")),
         Resource("user_led", 4, Pins("15", conn=("gpio", 0), dir="o")),
-
         Resource("pwm", 0, Pins("5", conn=("gpio", 0), dir="o")),
     ]
 

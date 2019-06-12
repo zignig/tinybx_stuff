@@ -8,8 +8,9 @@ from nmigen.cli import main
 
 from cores.gizmo import Gizmo
 
+
 class Boneless(Elaboratable):
-    def __init__(self,asm_file="asm/base.asm"):
+    def __init__(self, asm_file="asm/base.asm"):
         self.memory = Memory(width=16, depth=512)  # max of  8*1024 on the 8k
         self.ext_port = _ExternalPort()
         self.asm_file = asm_file
@@ -31,7 +32,9 @@ class Boneless(Elaboratable):
         print("Preparing Gizmos")
         for g in self.gizmos:
             g.prepare(self)
-
+        print("Dump gizmo data")
+        for g in self.gizmos:
+            g.dump()
         # TODO , map registers bits and code fragments from gizmos
 
         # Code

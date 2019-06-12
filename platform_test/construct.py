@@ -12,7 +12,7 @@ from cores.pwm import Pwm
 
 
 class CPU(Elaboratable):
-    def __init__(self,platform,asm_file="asm/base.asm"):
+    def __init__(self, platform, asm_file="asm/base.asm"):
         b = Boneless(asm_file=asm_file)
         self.b = b
         self.platform = platform
@@ -22,7 +22,9 @@ class CPU(Elaboratable):
         l = UserLeds("leds", platform=platform)
         b.add_gizmo(l)
 
-        s = Serial("serial_port",platform=platform,number=0,baud=9600)  # should pass baud
+        s = Serial(
+            "serial_port", platform=platform, number=0, baud=9600
+        )  # should pass baud
         b.add_gizmo(s)
 
         c = Counter("counter1", platform=platform)
@@ -31,8 +33,8 @@ class CPU(Elaboratable):
         c2 = Counter("counter2", platform=platform)
         b.add_gizmo(c2)
 
-        #p = Pwm("pwm",platform=platform,pin=12)
-        #b.add_gizmo(p)
+        # p = Pwm("pwm",platform=platform,pin=12)
+        # b.add_gizmo(p)
 
         # Assign addresses , get code etch
         # TODO test and fix

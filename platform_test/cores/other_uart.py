@@ -117,8 +117,8 @@ class RS232TX(Elaboratable):
 
 
 class UART(Elaboratable):
-    def __init__(self,tx_pin,rx_pin,clock,baud=9600):
-        tuning_word = round(2**32*baud/clock)
+    def __init__(self, tx_pin, rx_pin, clock, baud=9600):
+        tuning_word = round(2 ** 32 * baud / clock)
         self.tx = RS232TX(tuning_word)
         self.rx = RS232RX(tuning_word)
         self.tx_pin = tx_pin
@@ -149,7 +149,7 @@ class Loopback(Elaboratable):
 class TestUART(unittest.TestCase):
     def test_loopback(self):
         dut = Loopback()
-        test_vector = [32, 129, 201, 39, 0, 255,0x55]
+        test_vector = [32, 129, 201, 39, 0, 255, 0x55]
 
         with Simulator(Fragment.get(dut, None), vcd_file=open("uart.vcd", "w")) as sim:
             sim.add_clock(1e-6)

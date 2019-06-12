@@ -2,7 +2,7 @@ import itertools
 
 from nmigen.build import Resource, Subsignal, Pins
 from nmigen.build import ResourceError
-from .gizmo import Gizmo, IO
+from .gizmo import Gizmo, IO, BIT
 
 from nmigen import *
 from .uart import UART, Loopback
@@ -11,28 +11,29 @@ from .other_uart import UART as newUART
 
 class Serial(Gizmo):
     " Uart connection in 4 registers"
+
     def build(self):
         serial = self.platform.request("serial", self.number)
         print(serial)
         clock = self.platform.lookup("clk16").clock
-        uart = newUART(serial.tx,serial.rx,clock.frequency, self.baud)
+        uart = newUART(serial.tx, serial.rx, clock.frequency, self.baud)
         self.add_device(uart)
 
-        tx_status = IO(
-            sig_in=uart.tx.ack, sig_out=uart.tx.stb, name="tx_status"
-        )
+        tx_status = IO(sig_in=uart.tx.ack, sig_out=uart.tx.stb, name="tx_status")
+        tx_status.add_bit(BIT("ack", 0))
+        tx_status.add_bit(BIT("stb", 0))
         self.add_reg(tx_status)
 
         tx_data = IO(sig_out=uart.tx.data, name="tx_data")
         self.add_reg(tx_data)
 
-        rx_status = IO(
-            sig_in=uart.rx.stb, name="rx_status"
-        )
+        rx_status = IO(sig_in=uart.rx.stb, name="rx_status")
+        rx_status.add_bit(BIT("stb", 0))
         self.add_reg(rx_status)
 
         rx_data = IO(sig_in=uart.rx.data, name="rx_data")
         self.add_reg(rx_data)
+
 
 class OldSerial(Gizmo):
     " Uart connection in 4 registers"
@@ -63,6 +64,7 @@ class OldSerial(Gizmo):
 
 class SerialLoop(Gizmo):
     " Loopback uart on serial 0 and serial 1"
+
     def build(self):
 
         m = Module()
