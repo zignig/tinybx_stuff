@@ -6,6 +6,7 @@ import math
 class Sin(Elaboratable):
     def __init__(self,width=16,resolution=8):
         self.table = Memory(width=width,depth=2**resolution)
+        self.r = self.table.read_port()
         self.o = Signal((width,True))
         self.resolution = resolution
 
@@ -25,13 +26,15 @@ class Sin(Elaboratable):
 
     def elaborate(self,platform):
         m = Module()
+        m.submodules += self.r
         m.d.sync += self.counter.eq(self.counter+1)
-        #m.d.comb += self.o.eq(self.table[self.counter])
+        m.d.comb += self.r.addr.eq(self.counter)
+        m.d.sync += self.o.eq(self.r.data)
         return m 
         
 
 def tail():
-    for i in range(1000):
+    for i in range(10000):
         yield 
 
 def runner():
@@ -45,9 +48,9 @@ if __name__ == "__main__":
         tb,
         vcd_file=open("trig.vcd", "w"),
         #gtkw_file=open("trig.gtkw", "w"),
-        #traces=[tb.o,tb.counter],
+        traces=[tb.o,tb.counter],
     ) as sim:
         sim.add_clock(freq)
-        sim.add_sync_process(runner)
+        sim.add_sync_process(runner())
         sim.run()
 
