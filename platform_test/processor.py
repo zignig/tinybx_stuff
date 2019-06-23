@@ -18,6 +18,7 @@ class Boneless(Elaboratable):
         # Gizmos
         self.addr = 0
         self.gizmos = []
+        self.mapping = {}
 
     def add_gizmo(self, giz):
         self.gizmos.append(giz)
@@ -35,6 +36,7 @@ class Boneless(Elaboratable):
         print("Dump gizmo data")
         for g in self.gizmos:
             g.dump()
+            print(g.map())
         # TODO , map registers bits and code fragments from gizmos
 
         # Code

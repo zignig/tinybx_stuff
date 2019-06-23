@@ -19,20 +19,24 @@ wait:
     delay
     delay
 .endm 
+.string bob, "this is test"
 
 ; 
 init:
-    MOVL R4,48 
-    MOVH R4,0
+    MOVL R4,0 
+    MOVH R4,48
     MOVL R1,90
     MOVH R1,0
 loop:
-    STX R4, R0, 2 
-    MOVL R3,1     
-    STX R3, R0, 1 
+    MOVL R0,1
+    STX R4, R0, 0 
+    MOVH R0,1
+    STX R3, R0, 0 
     MOVL R3,0     
-    STX R3, R0, 1 
+    STX R3, R0, 0 
+    CMP R1,R4
+    JE init
     ADDI R4,1
-    multi
+    delay
     J loop
 

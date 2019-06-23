@@ -16,5 +16,5 @@ class Counter(Gizmo):
     def build(self):
         c = counter()
         self.add_device(c)
-        s = IO(sig_in=c.counter, name="counter")
+        s = IO(sig_in=c.counter, name=self.name)
         self.add_reg(s)

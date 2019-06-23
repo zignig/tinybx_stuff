@@ -90,6 +90,7 @@ class Gizmo:
         self.registers = []
         self.devices = []
         self.code = ""  # assembly code for the gizmo TODO , auto attach
+        self.mapping = {}
         self.build()
 
     def dump(self):
@@ -114,14 +115,20 @@ class Gizmo:
 
     def prepare(self, boneless):
         " Build internal and map external bus addresses "
-        print("Preparing " + str(self.name) + " within " + str(boneless))
-        print(self.registers)
-        print(self.devices)
-        print("----")
+        if self.debug:
+            print("Preparing " + str(self.name) + " within " + str(boneless))
+            print(self.registers)
+            print(self.devices)
+            print("----")
         if len(self.registers) > 0:
             for reg in self.registers:
                 reg.set_addr(boneless.addr)
+                self.mapping[reg.name] = boneless.addr 
                 boneless.addr += 1
+
+    def map(self):
+        " needs to be prepared"
+        return self.mapping
 
     def attach(self, boneless, m, platform):
         " Generate and bind the gateway to the Boneless "

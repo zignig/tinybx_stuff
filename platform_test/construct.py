@@ -6,13 +6,13 @@ from processor import Boneless
 # Working gizmos
 from cores.gizmo import TestGizmo
 from cores.user_leds import UserLeds
-from cores.serial import Serial
+from cores.serial import Serial,OldSerial
 from cores.counter import Counter
 from cores.pwm import Pwm
 
 
 class CPU(Elaboratable):
-    def __init__(self, platform, asm_file="asm/base.asm"):
+    def __init__(self, platform, asm_file="asm/rx.asm"):
         b = Boneless(asm_file=asm_file)
         self.b = b
         self.platform = platform

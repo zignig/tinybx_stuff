@@ -19,7 +19,7 @@ class UserLeds(Gizmo):
                 break
 
         leds_cat = Cat(led.o for led in leds)
-        o = IO(sig_out=leds_cat, name="user_leds")
+        o = IO(sig_out=leds_cat, name="user")
         for i, j in enumerate(leds):
             o.add_bit(BIT("led_" + str(i), i))
         self.add_reg(o)
