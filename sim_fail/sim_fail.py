@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     cli.main_runner(parser, args, tb,platform=platform,ports=ios)
 
-# python sim_fail.py simulate -c 1000 -v test.py
+# python sim_fail.py simulate -c 1000 -v test.vcd
 #Traceback (most recent call last):
 #  File "sim_fail.py", line 36, in <module>
 #    cli.main_runner(parser, args, tb,platform=platform,ports=ios)
