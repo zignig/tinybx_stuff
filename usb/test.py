@@ -13,6 +13,7 @@ def main():
     for i in range(32):
         dev.write(1, led.to_bytes(1, byteorder='big'), 1)
         print(f"[OUT] data = {led}");
+        led = ~led
         time.sleep(1) # wait 1s to see the led change its color
 
 
