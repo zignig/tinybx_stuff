@@ -89,4 +89,4 @@ class Top(Elaboratable):
 if __name__ == "__main__":
     platform = TinyFPGABXPlatform()
     t = Top() 
-    platform.build(t)
+    platform.build(t,do_program=True)
