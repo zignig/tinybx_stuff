@@ -56,7 +56,8 @@ class USBBlinker(Elaboratable):
 
         m.d.comb += [
             cfg_ep.source.connect(cfg_in),
-            cfg_out.connect(cfg_ep.sink)
+            cfg_out.connect(cfg_ep.sink),
+            usb_phy.pins.pullup.eq(1)
         ]
 
         # RGB blinker endpoint
@@ -75,14 +76,10 @@ class Top(Elaboratable):
             clk_pin = platform.request(platform.default_clk,dir="-")
 
             # PLL
-            pll = PLL(16,48)
+            pll = PLL(16,48,clk_pin)
             m.submodules.pll = pll
-            #m.domains.sync = ClockDomain()
-            m.domains += pll.domain
-            m.d.comb += [
-                    pll.clk_pin.eq(clk_pin),
-                    ClockSignal().eq(pll.clk_pin)
-            ]
+
+            m.domains += pll.domain 
             # USB Device
             blinker = USBBlinker()
             m.submodules.usb = blinker

@@ -31,11 +31,11 @@ class PLL(Elaboratable):
     good.
     """
 
-    def __init__(self, freq_in_mhz, freq_out_mhz, domain_name='sync'):
+    def __init__(self, freq_in_mhz, freq_out_mhz,clk_sig=None, domain_name='sync'):
         self.freq_in = freq_in_mhz
         self.freq_out = freq_out_mhz
         self.coeff = self._calc_freq_coefficients()
-        self.clk_pin = Signal()
+        self.clk_pin = clk_sig 
         self.domain_name = domain_name
         self.domain = ClockDomain(domain_name)
         self.ports = [
@@ -74,18 +74,18 @@ class PLL(Elaboratable):
         # coeff = self._calc_freq_coefficients()
 
         pll_lock = Signal()
-        pll = Instance("SB_PLL40_PAD",
+        pll = Instance("SB_PLL40_CORE",
             p_FEEDBACK_PATH='SIMPLE',
             p_DIVR=self.coeff.divr,
             p_DIVF=self.coeff.divf,
             p_DIVQ=self.coeff.divq,
-            p_FILTER_RANGE=0b001,
+            #p_FILTER_RANGE=0b001,
 
-            i_PACKAGEPIN=self.clk_pin,
+            i_REFERENCECLK=self.clk_pin,
             i_RESETB=Const(1),
             i_BYPASS=Const(0),
 
-            o_PLLOUTGLOBAL=ClockSignal(self.domain_name),
+            o_PLLOUTCORE=ClockSignal(self.domain_name),
             o_LOCK=pll_lock)
 
         m = Module()
