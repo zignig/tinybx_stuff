@@ -9,6 +9,7 @@ from lambdausb.protocol import Transfer
 
 from nmigen_boards.tinyfpga_bx import *
 from pll import PLL
+from clockdiv import ClockDivisor
 
 class BlinkerEndpoint(Elaboratable):
     def __init__(self, led):
@@ -45,26 +46,26 @@ class USBBlinker(Elaboratable):
         m = Module()
 
         # USB device
-        usb_phy = m.submodules.ulpi_phy = USBPHY(platform.request("usb", 0),48e6)
-        usb_dev  = m.submodules.usb_dev  = USBDevice(usb_phy)
+        usb_phy = m.submodules.ulpi_phy = DomainRenamer('pll')(USBPHY(platform.request("usb", 0),48e6))
+        #usb_dev  = m.submodules.usb_dev  = USBDevice(usb_phy)
 
         # Configuration endpoint
-        from config import descriptor_map, rom_init
-        cfg_ep  = m.submodules.cfg_ep = ConfigurationEndpoint(descriptor_map, rom_init)
-        cfg_in  = usb_dev.input_port(0x0, 64, Transfer.CONTROL)
-        cfg_out = usb_dev.output_port(0x0, 64, Transfer.CONTROL)
+        #from config import descriptor_map, rom_init
+        #cfg_ep  = m.submodules.cfg_ep = ConfigurationEndpoint(descriptor_map, rom_init)
+        #cfg_in  = usb_dev.input_port(0x0, 64, Transfer.CONTROL)
+        #cfg_out = usb_dev.output_port(0x0, 64, Transfer.CONTROL)
 
         m.d.comb += [
-            cfg_ep.source.connect(cfg_in),
-            cfg_out.connect(cfg_ep.sink),
+        #    cfg_ep.source.connect(cfg_in),
+        #    cfg_out.connect(cfg_ep.sink),
             usb_phy.pins.pullup.eq(1)
         ]
 
         # RGB blinker endpoint
-        ep  = m.submodules.ep = BlinkerEndpoint(platform.request("led", 0))
-        out = usb_dev.output_port(0x1, 512, Transfer.BULK)
+        #ep  = m.submodules.ep = BlinkerEndpoint(platform.request("led", 0))
+        #out = usb_dev.output_port(0x1, 512, Transfer.BULK)
 
-        m.d.comb += out.connect(ep.sink)
+        #m.d.comb += out.connect(ep.sink)
 
         return m
 
@@ -76,10 +77,16 @@ class Top(Elaboratable):
             clk_pin = platform.request(platform.default_clk,dir="-")
 
             # PLL
-            pll = PLL(16,48,clk_pin)
+            pll = PLL(16,48,clk_pin,domain_name="pll")
             m.submodules.pll = pll
 
-            m.domains += pll.domain 
+
+            cd  = ClockDivisor(factor=4)
+            slow = ClockDomain('slow')
+            m.d.comb += slow.clk.eq(cd.o)
+            m.domains = slow
+            m.submodules.div = cd
+
             # USB Device
             blinker = USBBlinker()
             m.submodules.usb = blinker
