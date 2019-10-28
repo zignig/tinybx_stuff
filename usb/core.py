@@ -84,7 +84,8 @@ class Top(Elaboratable):
             cd  = ClockDivisor(factor=4)
             slow = ClockDomain('slow')
             m.d.comb += slow.clk.eq(cd.o)
-            m.domains = slow
+            m.domains.sync  = slow
+
             m.submodules.div = cd
 
             # USB Device

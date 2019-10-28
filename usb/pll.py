@@ -90,6 +90,7 @@ class PLL(Elaboratable):
 
         m = Module()
         m.submodules += pll
+        m.domains.pll = self.domain 
         m.submodules += ResetSynchronizer(~pll_lock, domain=self.domain_name)
         return m
 
