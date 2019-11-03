@@ -46,14 +46,14 @@ class USBBlinker(Elaboratable):
         m = Module()
 
         # USB device
-        usb_phy = m.submodules.ulpi_phy = DomainRenamer('pll')(USBPHY(platform.request("usb", 0),48e6))
-        #usb_dev  = m.submodules.usb_dev  = USBDevice(usb_phy)
+        usb_phy = m.submodules.ulpi_phy = DomainRenamer('clk48')(USBPHY(platform.request("usb", 0),48e6))
+        usb_dev  = m.submodules.usb_dev  = USBDevice(usb_phy)
 
         # Configuration endpoint
-        #from config import descriptor_map, rom_init
-        #cfg_ep  = m.submodules.cfg_ep = ConfigurationEndpoint(descriptor_map, rom_init)
-        #cfg_in  = usb_dev.input_port(0x0, 64, Transfer.CONTROL)
-        #cfg_out = usb_dev.output_port(0x0, 64, Transfer.CONTROL)
+        from config import descriptor_map, rom_init
+        cfg_ep  = m.submodules.cfg_ep = ConfigurationEndpoint(descriptor_map, rom_init)
+        cfg_in  = usb_dev.input_port(0x0, 64, Transfer.CONTROL)
+        cfg_out = usb_dev.output_port(0x0, 64, Transfer.CONTROL)
 
         m.d.comb += [
         #    cfg_ep.source.connect(cfg_in),
@@ -77,19 +77,19 @@ class Top(Elaboratable):
             clk_pin = platform.request(platform.default_clk,dir="-")
 
             # PLL
-            pll = PLL(16,48,clk_pin,domain_name="pll")
+            pll = PLL(16,48,clk_pin,domain_name="clk48")
             m.submodules.pll = pll
 
 
             cd  = ClockDivisor(factor=4)
-            slow = ClockDomain('slow')
+            slow = ClockDomain('sync')
             m.d.comb += slow.clk.eq(cd.o)
             m.domains.sync  = slow
 
             m.submodules.div = cd
 
             # USB Device
-            blinker = USBBlinker()
+            blinker = DomainRenamer('clk48')(USBBlinker())
             m.submodules.usb = blinker
 
             return m
